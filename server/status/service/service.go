@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/rest"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/status/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/rest"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/domain"
 )
 
 type Service struct {

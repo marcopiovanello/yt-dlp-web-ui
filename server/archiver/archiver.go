@@ -6,8 +6,8 @@ import (
 	"log/slog"
 
 	evbus "github.com/asaskevich/EventBus"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archive"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 )
 
 const QueueName = "process:archive"

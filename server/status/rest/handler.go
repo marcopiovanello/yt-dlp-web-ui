@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/status/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/domain"
 )
 
 type RestHandler struct {

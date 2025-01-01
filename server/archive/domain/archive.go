@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archive/data"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive/data"
 )
 
 type ArchiveEntry struct {

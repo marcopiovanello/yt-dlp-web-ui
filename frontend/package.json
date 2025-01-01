@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build"
   },
-  "author": "marcopeocchi",
+  "author": "marcopiovanello",
   "license": "GPL-3.0-only",
   "private": true,
   "dependencies": {

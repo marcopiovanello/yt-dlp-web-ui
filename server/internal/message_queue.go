@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	evbus "github.com/asaskevich/EventBus"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"golang.org/x/sync/semaphore"
 )
 

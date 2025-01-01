@@ -93,7 +93,7 @@ export default function Login() {
           </Title>
           <Title fontWeight={'500'} fontSize={16} color={'gray'}>
             To configure authentication check the&nbsp;
-            <a href='https://github.com/marcopeocchi/yt-dlp-web-ui/wiki/Authentication-methods'>wiki</a>.
+            <a href='https://github.com/marcopiovanello/yt-dlp-web-ui/wiki/Authentication-methods'>wiki</a>.
           </Title>
           <TextField
             label="Username"

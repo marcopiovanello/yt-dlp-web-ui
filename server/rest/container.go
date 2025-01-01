@@ -2,9 +2,9 @@ package rest
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
-	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/v3/server/middleware"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
 )
 
 func Container(args *ContainerArgs) *Handler {

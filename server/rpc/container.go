@@ -2,11 +2,11 @@ package rpc
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal/livestream"
-	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/v3/server/middleware"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
+	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
 )
 
 // Dependency injection container.

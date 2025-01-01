@@ -2,10 +2,10 @@ package status
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/status/repository"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/status/rest"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/status/service"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/repository"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/rest"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/service"
 )
 
 func ApplyRouter(mdb *internal.MemoryDB) func(chi.Router) {

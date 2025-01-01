@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 )
 
 type metadata struct {

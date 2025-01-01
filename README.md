@@ -1,6 +1,6 @@
 > [!NOTE]  
 > A poll is up to decide the future of yt-dlp-web-ui frontend! If you're interested you can take part.  
-> https://github.com/marcopeocchi/yt-dlp-web-ui/discussions/223
+> https://github.com/marcopiovanello/yt-dlp-web-ui/discussions/223
 
 # yt-dlp Web UI
 
@@ -10,14 +10,14 @@ High performance extendeable web ui and RPC server for yt-dlp with low impact on
 
 Created for the only purpose of *fetching* videos from my server/nas and monitor upcoming livestreams. 
 
-**Docker images are available on [Docker Hub](https://hub.docker.com/r/marcobaobao/yt-dlp-webui) or [ghcr.io](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui)**.
+**Docker images are available on [Docker Hub](https://hub.docker.com/r/marcobaobao/yt-dlp-webui) or [ghcr.io](https://github.com/marcopiovanello/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui)**.
 
 ```sh
 docker pull marcobaobao/yt-dlp-webui
 ```
 ```sh
 # latest dev
-docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
+docker pull ghcr.io/marcopiovanello/yt-dlp-web-ui:latest
 ```
 
 ## Donate to yt-dlp-webui development
@@ -31,7 +31,7 @@ docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 ![image](https://github.com/user-attachments/assets/16450a40-cda6-4c8b-9d20-8ec36282f6ed)
 
 ## Video showcase
-[app.webm](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/91545bc4-233d-4dde-8504-27422cb26964)
+[app.webm](https://github.com/marcopiovanello/yt-dlp-web-ui/assets/35533749/91545bc4-233d-4dde-8504-27422cb26964)
 
 ## Settings
 
@@ -52,7 +52,7 @@ This feature is disabled by default as this intended to be used to retrieve the 
 
 To enable it just go to the settings page and enable the **Enable video/audio formats selection** flag!
 
-## [Docker](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui) run
+## [Docker](https://github.com/marcopiovanello/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui) run
 ```sh
 docker pull marcobaobao/yt-dlp-webui
 docker run -d -p 3033:3033 -v <your dir>:/downloads marcobaobao/yt-dlp-webui
@@ -110,7 +110,7 @@ services:
     restart: unless-stopped
 ```
 
-## [Prebuilt binaries](https://github.com/marcopeocchi/yt-dlp-web-ui/releases) installation
+## [Prebuilt binaries](https://github.com/marcopiovanello/yt-dlp-web-ui/releases) installation
 
 ```sh
 # download the latest release from the releases page

@@ -6,11 +6,11 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archive/domain"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
 
-	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/v3/server/middleware"
+	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
 )
 
 type Handler struct {

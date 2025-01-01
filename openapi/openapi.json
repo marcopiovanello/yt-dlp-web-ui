@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Swagger yt-dlp-webui - OpenAPI 3.1",
-    "description": "yt-dlp-webui api based on the OpenAPI 3.1 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). \n\nSome useful links:\n- [yt-dlp-webui repository](https://github.com/marcopeocchi/yt-dlp-web-ui)",
+    "description": "yt-dlp-webui api based on the OpenAPI 3.1 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). \n\nSome useful links:\n- [yt-dlp-webui repository](https://github.com/marcopiovanello/yt-dlp-web-ui)",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "email": "apiteam@swagger.io"
@@ -28,7 +28,7 @@
       "description": "Everything about your Pets",
       "externalDocs": {
         "description": "Find out more",
-        "url": "https://github.com/marcopeocchi/yt-dlp-web-ui"
+        "url": "https://github.com/marcopiovanello/yt-dlp-web-ui"
       }
     }
   ],

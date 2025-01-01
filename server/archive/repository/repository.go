@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/google/uuid"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archive/data"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archive/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive/data"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive/domain"
 )
 
 type Repository struct {

@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal"
-	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
 )
 
 type Service struct {
