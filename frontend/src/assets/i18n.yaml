@@ -802,3 +802,69 @@ languages:
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
     accentSelect: 'Accent'
+  portuguese-br:
+    urlInput: URL do vídeo (uma por linha)
+    statusTitle: Status
+    statusReady: Pronto
+    selectFormatButton: Selecionar formato
+    startButton: Iniciar
+    abortAllButton: Cancelar tudo
+    updateBinButton: Atualizar binário yt-dlp
+    darkThemeButton: Tema escuro
+    lightThemeButton: Tema claro
+    settingsAnchor: Configurações
+    serverAddressTitle: Endereço do servidor
+    serverPortTitle: Porta
+    extractAudioCheckbox: Extrair áudio
+    noMTimeCheckbox: Não definir hora de modificação do arquivo
+    bgReminder: Uma vez que você feche esta página, o download continuará em segundo plano.
+    toastConnected: 'Conectado a '
+    toastUpdated: Binário yt-dlp atualizado!
+    formatSelectionEnabler: Habilitar seleção de formatos de vídeo/aúdio
+    themeSelect: 'Tema'
+    languageSelect: 'Idioma'
+    overridesAnchor: Substituições
+    pathOverrideOption: Habilitar substituição do caminho de saída
+    filenameOverrideOption: Habilitar substituição do nome do arquivo de saída
+    customFilename: Nome de arquivo personalizado (deixe em branco para usar o padrão)
+    customPath: Caminho personalizado
+    customArgs: Habilitar argumentos personalizados do yt-dlp (grandes poderes = grandes responsabilidades)
+    customArgsInput: Argumentos personalizados do yt-dlp
+    rpcConnErr: Erro ao conectar ao servidor RPC
+    splashText: Nenhum download ativo
+    archiveTitle: Arquivo
+    clipboardAction: URL copiada para a área de transferência
+    playlistCheckbox: Baixar playlist (isso pode levar algum tempo, depois de enviar você pode fechar esta janela)
+    restartAppMessage: Necessário recarregar a página para que a mudança tenha efeito
+    servedFromReverseProxyCheckbox: Está atrás de um proxy reverso
+    urlBase: Base da URL, para suporte de proxy reverso (subdiretório), padrão vazio
+    newDownloadButton: Novo download
+    homeButtonLabel: Início
+    archiveButtonLabel: Arquivo
+    settingsButtonLabel: Configurações
+    rpcAuthenticationLabel: Autenticação RPC
+    themeTogglerLabel: Alternador de tema
+    loadingLabel: Carregando...
+    appTitle: Título do aplicativo
+    savedTemplates: Modelos salvos
+    templatesEditor: Editor de modelos
+    templatesEditorNameLabel: Nome do modelo
+    templatesEditorContentLabel: Conteúdo do modelo
+    logsTitle: 'Logs'
+    awaitingLogs: 'Aguardando logs...'
+    bulkDownload: 'Baixar arquivos em um arquivo zip'
+    rpcPollingTimeTitle: Tempo de polling RPC
+    rpcPollingTimeDescription: Um intervalo menor resulta em maior uso de CPU (lado do servidor e do cliente)
+    templatesReloadInfo: Para registrar um novo modelo, pode ser necessário recarregar a página.
+    livestreamURLInput: URL da transmissão ao vivo
+    livestreamStatusWaiting: Aguardando/Aguarde o início
+    livestreamStatusDownloading: Baixando
+    livestreamStatusCompleted: Concluído
+    livestreamStatusErrored: Erro
+    livestreamStatusUnknown: Desconhecido
+    livestreamDownloadInfo: |
+      Isso monitorará uma transmissão ao vivo que ainda não começou. Cada processo será executado com --wait-for-video 10.
+      Se uma transmissão ao vivo já iniciada for fornecida, ela ainda será baixada, mas seu progresso não será rastreado.
+      Uma vez iniciada, a transmissão ao vivo será migrada para a página de downloads.
+    livestreamExperimentalWarning: Este recurso ainda é experimental. Algo pode quebrar!
+    accentSelect: 'Accent'
