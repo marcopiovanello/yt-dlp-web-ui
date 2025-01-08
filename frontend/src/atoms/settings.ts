@@ -6,19 +6,20 @@ import { atomWithStorage } from 'jotai/utils'
 import { atom } from 'jotai'
 
 export const languages = [
-  'english',
-  'chinese',
-  'russian',
-  'french',
-  'italian',
-  'spanish',
-  'korean',
-  'japanese',
   'catalan',
-  'ukrainian',
-  'swedish',
+  'chinese',
+  'english',
+  'french',
+  'german',
+  'italian',
+  'japanese',
+  'korean',
   'polish',
-  'german'
+  'portuguese-br',
+  'russian',
+  'spanish',
+  'swedish',
+  'ukrainian'
 ] as const
 
 export type Language = (typeof languages)[number]
