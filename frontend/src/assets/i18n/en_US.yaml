@@ -1,0 +1,66 @@
+keys:
+  urlInput: Video URL (one per line)
+  statusTitle: Status
+  statusReady: Ready
+  selectFormatButton: Select format
+  startButton: Start
+  abortAllButton: Abort All
+  updateBinButton: Update yt-dlp binary
+  darkThemeButton: Dark theme
+  lightThemeButton: Light theme
+  settingsAnchor: Settings
+  serverAddressTitle: Server address
+  serverPortTitle: Port
+  extractAudioCheckbox: Extract audio
+  noMTimeCheckbox: Don't set file modification time
+  bgReminder: Once you close this page the download will continue in the background.
+  toastConnected: 'Connected to '
+  toastUpdated: Updated yt-dlp binary!
+  formatSelectionEnabler: Enable video/audio formats selection
+  themeSelect: 'Theme'
+  languageSelect: 'Language'
+  overridesAnchor: Overrides
+  pathOverrideOption: Enable output path overriding
+  filenameOverrideOption: Enable output file name overriding
+  customFilename: Custom filename (leave blank to use default)
+  customPath: Custom path
+  customArgs: Enable custom yt-dlp args (great power = great responsibilities)
+  customArgsInput: Custom yt-dlp arguments
+  rpcConnErr: Error while conencting to RPC server
+  splashText: No active downloads
+  archiveTitle: Archive
+  clipboardAction: Copied URL to clipboard
+  playlistCheckbox: Download playlist (it will take time, after submitting you may close this window)
+  restartAppMessage: Needs a page reload to take effect
+  servedFromReverseProxyCheckbox: Is behind a reverse proxy
+  urlBase: URL base, for reverse proxy support (subdir), defaults to empty
+  newDownloadButton: New download
+  homeButtonLabel: Home
+  archiveButtonLabel: Archive
+  settingsButtonLabel: Settings
+  rpcAuthenticationLabel: RPC authentication
+  themeTogglerLabel: Theme toggler
+  loadingLabel: Loading...
+  appTitle: App title
+  savedTemplates: Saved templates
+  templatesEditor: Templates editor
+  templatesEditorNameLabel: Template name
+  templatesEditorContentLabel: Template content
+  logsTitle: 'Logs'
+  awaitingLogs: 'Awaiting logs...'
+  bulkDownload: 'Download files in a zip archive'
+  rpcPollingTimeTitle: RPC polling time
+  rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
+  templatesReloadInfo: To register a new template it might need a page reload.
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'

@@ -1,0 +1,63 @@
+keys:
+  urlInput: YouTube나 다른 지원되는 사이트의 URL
+  statusTitle: 상태
+  startButton: 시작
+  statusReady: 준비됨
+  abortAllButton: 모두 중단
+  updateBinButton: yt-dlp 바이너리 업데이트
+  darkThemeButton: 다크 모드
+  lightThemeButton: 라이트 모드
+  settingsAnchor: 설정
+  serverAddressTitle: 서버 주소
+  serverPortTitle: Port
+  extractAudioCheckbox: 오디오 추출
+  noMTimeCheckbox: 파일 수정 시간을 설정하지 않음
+  bgReminder: 이 페이지를 닫아도 백그라운드에서 다운로드가 계속됩니다
+  toastConnected: '다음으로 연결됨 '
+  toastUpdated: yt-dlp 바이너리를 업데이트 했습니다
+  formatSelectionEnabler: 비디오/오디오 포멧 옵션 표시
+  themeSelect: 'Theme'
+  languageSelect: 'Language'
+  overridesAnchor: Overrides
+  pathOverrideOption: Enable output path overriding
+  filenameOverrideOption: Enable output file name overriding
+  customFilename: Custom filename (leave blank to use default)
+  customPath: Custom path
+  customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+  customArgsInput: Custom yt-dlp arguments
+  rpcConnErr: Error while conencting to RPC server
+  splashText: No active downloads
+  archiveTitle: Archive
+  clipboardAction: Copied URL to clipboard
+  playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
+  servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+  newDownloadButton: New download
+  homeButtonLabel: Home
+  archiveButtonLabel: Archive
+  settingsButtonLabel: Settings
+  rpcAuthenticationLabel: RPC authentication
+  themeTogglerLabel: Theme toggler
+  loadingLabel: Loading...
+  appTitle: App title
+  savedTemplates: Saved templates
+  templatesEditor: Templates editor
+  templatesEditorNameLabel: Template name
+  templatesEditorContentLabel: Template content
+  logsTitle: 'Logs'
+  awaitingLogs: 'Awaiting logs...'
+  bulkDownload: 'Download files in a zip archive'
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'
+  urlBase: URL base, for reverse proxy support (subdir), defaults to empty
+  rpcPollingTimeTitle: RPC polling time
+  rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)

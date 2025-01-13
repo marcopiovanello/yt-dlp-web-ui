@@ -1,0 +1,64 @@
+keys:
+  urlInput: URL Video (uno per linea)
+  statusTitle: Stato
+  startButton: Inizia
+  statusReady: Pronto
+  abortAllButton: Termina tutto
+  updateBinButton: Aggiorna yt-dlp
+  darkThemeButton: Tema scuro
+  lightThemeButton: Tema chiaro
+  settingsAnchor: Impostazioni
+  serverAddressTitle: Indirizzo server
+  serverPortTitle: Porta
+  extractAudioCheckbox: Estrai l'audio
+  noMTimeCheckbox: Non impostare la proprietà "Data ultima modifica"
+  bgReminder: Chiusa questa UI il download continuerà in background.
+  toastConnected: 'Connesso a '
+  toastUpdated: yt-dlp aggiornato con successo!
+  formatSelectionEnabler: Abilita la selezione dei formati audio/video
+  themeSelect: 'Tema'
+  languageSelect: 'Lingua'
+  overridesAnchor: Sovrascritture
+  pathOverrideOption: Abilita sovrascrittura percorso di output
+  filenameOverrideOption: Abilita sovrascrittura del nome del file di output
+  customFilename: Custom filename (leave blank to use default)
+  customPath: Custom path
+  customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+  customArgsInput: Custom yt-dlp arguments
+  rpcConnErr: Error nella connessione al server RPC
+  splashText: Nessun download attivo
+  archiveTitle: Archivio
+  clipboardAction: URL copiato negli appunti
+  playlistCheckbox: Download playlist (richiederà tempo, puoi chiudere la finestra dopo l'inoltro)
+  restartAppMessage: La finestra deve essere ricaricata perché abbia effetto
+  servedFromReverseProxyCheckbox: Is behind a reverse proxy
+  newDownloadButton: Nuovo download
+  homeButtonLabel: Home
+  archiveButtonLabel: Archive
+  settingsButtonLabel: Settings
+  rpcAuthenticationLabel: RPC authentication
+  themeTogglerLabel: Theme toggler
+  loadingLabel: Loading...
+  appTitle: Titolo applicazione
+  savedTemplates: Template salvati
+  templatesEditor: Editor template
+  templatesEditorNameLabel: Nome template
+  templatesEditorContentLabel: Contentunto template
+  logsTitle: 'Logs'
+  awaitingLogs: 'Awaiting logs...'
+  bulkDownload: 'Download files in a zip archive'
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'
+  urlBase: base URL, per supporto a reverse proxy (subdir), default vuoto
+  rpcPollingTimeTitle: Intervallo di polling RPC
+  rpcPollingTimeDescription: Un intervallo più corto implica un maggior utilizzo di CPU (lato client e server)

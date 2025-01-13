@@ -1,0 +1,67 @@
+keys:
+  urlInput: URL vidéo de YouTube ou d'un autre service pris en charge
+  statusTitle: Statut
+  statusReady: Prêt
+  selectFormatButton: Sélectionner le format
+  startButton: Démarrer
+  abortAllButton: Tout arrêter
+  updateBinButton: Mettre à jour l'exécutable yt-dlp
+  darkThemeButton: Thème sombre
+  lightThemeButton: Thème clair
+  settingsAnchor: Paramètres
+  serverAddressTitle: Adresse du serveur
+  serverPortTitle: Port
+  extractAudioCheckbox: Extraire l'audio
+  noMTimeCheckbox: Ne pas définir le temps de modification du fichier
+  bgReminder: Une fois que vous aurez fermé cette page, le téléchargement continuera en arrière-plan.
+  toastConnected: 'Connecté à '
+  toastUpdated: L'exécutable yt-dlp a été mis à jour !
+  formatSelectionEnabler: Activer la sélection des formats vidéo/audio
+  themeSelect: 'Thème'
+  languageSelect: 'Langue'
+  overridesAnchor: Remplacer
+  pathOverrideOption: Activer le remplacement du chemin de sortie
+  filenameOverrideOption: Activer le remplacement du nom du fichier de sortie
+  customFilename: Nom de fichier personnalisé (laisser vide pour utiliser le nom par défaut)
+  customPath: Chemin personnalisé
+  customArgs: Activer les args personnalisés yt-dlp (grand pouvoir = grandes responsabilités)
+  customArgsInput: Arguments yt-dlp personnalisés
+  rpcConnErr: Erreur lors de la connexion au serveur RPC
+  splashText: Aucun téléchargement actif
+  archiveTitle: Archive
+  clipboardAction: URL copiée dans le presse-papiers
+  playlistCheckbox: Télécharger la liste de lecture (cela prendra du temps, vous pouvez fermer cette fenêtre après l'avoir validée)
+  restartAppMessage: Nécessite un rechargement de la page pour prendre effet
+  servedFromReverseProxyCheckbox: Est derrière un sous-dossier de proxy inverse
+  notConnectedText: not connected
+  settingsLabel: Settings
+  newDownloadButton: New download
+  homeButtonLabel: Home
+  archiveButtonLabel: Archive
+  settingsButtonLabel: Settings
+  rpcAuthenticationLabel: RPC authentication
+  themeTogglerLabel: Theme toggler
+  loadingLabel: Loading...
+  appTitle: Nom de l'application
+  savedTemplates: Saved templates
+  templatesEditor: Templates editor
+  templatesEditorNameLabel: Template name
+  templatesEditorContentLabel: Template content
+  logsTitle: 'Logs'
+  awaitingLogs: 'Awaiting logs...'
+  bulkDownload: 'Download files in a zip archive'
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'
+  urlBase: URL base, for reverse proxy support (subdir), defaults to empty
+  rpcPollingTimeTitle: RPC polling time
+  rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)

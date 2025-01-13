@@ -1,0 +1,66 @@
+keys:
+  urlInput: Videolänk (en per rad)
+  statusTitle: Status
+  statusReady: Redo
+  selectFormatButton: Välj format
+  startButton: Start
+  abortAllButton: Avbryt alla
+  updateBinButton: Uppdatera yt-dlp
+  darkThemeButton: Mörkt tema
+  lightThemeButton: Ljust tema
+  settingsAnchor: Inställningar
+  serverAddressTitle: Serveraddress
+  serverPortTitle: Port
+  extractAudioCheckbox: Extrahera ljud
+  noMTimeCheckbox: Lägg inte till info om när filen senast modifierades
+  bgReminder: När du stänger denna sida så kommer nedladdningen att fortsätta i bakgrunden.
+  toastConnected: 'Ansluten till '
+  toastUpdated: Uppdaterade yt-dlp!
+  formatSelectionEnabler: Tillåt val av ljud- och bildformat
+  themeSelect: 'Tema'
+  languageSelect: 'Språk'
+  overridesAnchor: Överskrivningar
+  pathOverrideOption: Tillåt överskrivning av filsökvägen
+  filenameOverrideOption: Tillåt överskrivning av filnamn
+  customFilename: Eget filnamn (lämna blankt för standardnamn)
+  customPath: Egen filsökväg
+  customArgs: Tillåt egna yt-dlp-argument (frihet under ansvar!)
+  customArgsInput: Egna yt-dlp-argument
+  rpcConnErr: Ett fel inträffade vid anslutning till RPC-server
+  splashText: Inga pågående nedladdningar
+  archiveTitle: Arkiv
+  clipboardAction: Kopierade länken
+  playlistCheckbox: Ladda ner spellista (detta kommer ta did, efter start så kan du stänga detta fönster)
+  restartAppMessage: En sidomladdning behövs innan förändringen får effekt
+  servedFromReverseProxyCheckbox: Servern befinner sig bakom en omvänd proxy
+  urlBase: "URL-bas, måste anges när en omvänd proxy används. Standardinställning: lämna blank"
+  newDownloadButton: Ny nedladdning
+  homeButtonLabel: Hem
+  archiveButtonLabel: Arkiv
+  settingsButtonLabel: Inställningar
+  rpcAuthenticationLabel: RPC-Autentisering
+  themeTogglerLabel: Tema-knapp
+  loadingLabel: Laddar...
+  appTitle: Apptitel
+  savedTemplates: Sparade mallar
+  templatesEditor: Mallredigerare
+  templatesEditorNameLabel: Namn
+  templatesEditorContentLabel: Innehåll 
+  logsTitle: 'Loggar'
+  awaitingLogs: 'Väntar på loggar...'
+  bulkDownload: 'Ladda ner filer i ett zip-arkiv'
+  rpcPollingTimeTitle: Frekvens av RPC-uppdateringar
+  rpcPollingTimeDescription: En högre frekvens kräver mer CPU-resurser för både server och klient
+  templatesReloadInfo: För att registrera en ny mall så kan en sidomladdning krävas.
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'

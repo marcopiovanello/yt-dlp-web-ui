@@ -1,0 +1,63 @@
+keys:
+  urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
+  statusTitle: Статус
+  startButton: Начать
+  statusReady: Готово
+  abortAllButton: Прервать все
+  updateBinButton: Обновить бинарный файл yt-dlp
+  darkThemeButton: Темная тема
+  lightThemeButton: Светлая тема
+  settingsAnchor: Настройки
+  serverAddressTitle: Адрес сервера
+  serverPortTitle: Порт
+  extractAudioCheckbox: Извлечь аудио
+  noMTimeCheckbox: Не устанавливать время модификации файла
+  bgReminder: Как только вы закроете эту страницу, загрузка продолжится в фоновом режиме.
+  toastConnected: 'Подключен к '
+  toastUpdated: Бинарный файл yt-dlp обновлен!
+  formatSelectionEnabler: Активировать выбор видео/аудио форматов
+  themeSelect: 'Тема'
+  languageSelect: 'Язык'
+  overridesAnchor: Переопределить
+  pathOverrideOption: Активировать переопределение выходного пути
+  filenameOverrideOption: Активировать переопределение имени выходного файла
+  customFilename: Задать имя файла (оставьте пустым, чтобы использовать значение по умолчанию)
+  customPath: Задать путь
+  customArgs: Включить настраиваемые аргументы yt-dlp (большая сила = большая ответственность)
+  customArgsInput: Пользовательские аргументы yt-dlp
+  rpcConnErr: Ошибка при подключении к серверу RPC
+  splashText: Нет активных загрузок
+  archiveTitle: Архив
+  clipboardAction: URL скопирован в буфер обмена
+  playlistCheckbox: Скачать плейлист. Это займет время, после отправки вы сможете закрыть окно
+  servedFromReverseProxyCheckbox: Находится за обратным прокси
+  newDownloadButton: Новая загрузка
+  homeButtonLabel: Home
+  archiveButtonLabel: Архив
+  settingsButtonLabel: Настройки
+  rpcAuthenticationLabel: RPC-аутентификация
+  themeTogglerLabel: Переключить тему
+  loadingLabel: Загрузка...
+  appTitle: Название приложения
+  savedTemplates: Сохраненные шаблоны
+  templatesEditor: Редактор шаблонов
+  templatesEditorNameLabel: Имя шаблона
+  templatesEditorContentLabel: Содержание шаблона
+  logsTitle: 'Логи'
+  awaitingLogs: 'Ожидание логов...'
+  bulkDownload: 'Скачать файлы в zip архиве'
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'
+  urlBase: URL base, for reverse proxy support (subdir), defaults to empty
+  rpcPollingTimeTitle: RPC polling time
+  rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)

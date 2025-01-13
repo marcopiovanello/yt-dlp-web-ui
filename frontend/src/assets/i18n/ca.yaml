@@ -1,0 +1,63 @@
+keys:
+  urlInput: URL de YouTube o d'un altre servei compatible
+  statusTitle: Estat
+  startButton: Iniciar
+  statusReady: Llest
+  abortAllButton: Cancel·lar Tot
+  updateBinButton: Actualitzar el binari yt-dlp
+  darkThemeButton: Tema fosc
+  lightThemeButton: Tema clar
+  settingsAnchor: Configuració
+  serverAddressTitle: Direcció del servidor
+  serverPortTitle: Port
+  extractAudioCheckbox: Extreure àudio
+  noMTimeCheckbox: No guardar el temps de modificació de l'arxiu
+  bgReminder: Si tanques aquesta pàgina, la descàrrega continuarà en segon pla.
+  toastConnected: 'Connectat a'
+  toastUpdated: El binari yt-dlp està actualitzat!
+  formatSelectionEnabler: Habilitar la selecció de formats de vídeo/àudio
+  themeSelect: 'Tema'
+  languageSelect: 'Idiomes'
+  overridesAnchor: Anul·lacions
+  pathOverrideOption: Sobreescriure en la ruta de sortida
+  filenameOverrideOption: Sobreescriure el nom del fitxer
+  customFilename: Nom d'arxiu personalitzat (en blanc per utilitzar el predeterminat)
+  customPath: Ruta personalitzada
+  customArgs: Habilitar els arguments yt-dlp personalitzats (un gran poder comporta una gran responsabilitat)
+  customArgsInput: Arguments yt-dlp personalitzats
+  rpcConnErr: Error en connectar-se al servidor RPC
+  splashText: No active downloads
+  archiveTitle: Archive
+  clipboardAction: Copied URL to clipboard
+  playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
+  servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+  newDownloadButton: New download
+  homeButtonLabel: Home
+  archiveButtonLabel: Archive
+  settingsButtonLabel: Settings
+  rpcAuthenticationLabel: RPC authentication
+  themeTogglerLabel: Theme toggler
+  loadingLabel: Loading...
+  appTitle: App title
+  savedTemplates: Saved templates
+  templatesEditor: Templates editor
+  templatesEditorNameLabel: Template name
+  templatesEditorContentLabel: Template content
+  logsTitle: 'Logs'
+  awaitingLogs: 'Awaiting logs...'
+  bulkDownload: 'Download files in a zip archive'
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'
+  urlBase: URL base, for reverse proxy support (subdir), defaults to empty
+  rpcPollingTimeTitle: RPC polling time
+  rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)

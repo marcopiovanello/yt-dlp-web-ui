@@ -1,0 +1,65 @@
+keys:
+  urlInput: Video URL
+  statusTitle: Status
+  statusReady: Bereit
+  selectFormatButton: Format auswählen
+  startButton: Start
+  abortAllButton: Alle Abbrechen
+  updateBinButton: yt-dlp Binärdatei aktualisieren
+  darkThemeButton: Dunkel Modus
+  lightThemeButton: Hell Modus
+  settingsAnchor: Einstellungen
+  serverAddressTitle: Server Adresse
+  serverPortTitle: Port
+  extractAudioCheckbox: Audio extrahieren
+  noMTimeCheckbox: Datei-Änderungszeitpunkt nicht festlegen
+  bgReminder: Sobald Sie diese Seite schließen, wird der Download im Hintergrund fortgesetzt.
+  toastConnected: 'Verbunden mit '
+  toastUpdated: yt-dlp Binärdatei aktualisiert!
+  formatSelectionEnabler: Video/Audio Format auswählbar
+  themeSelect: 'Modus'
+  languageSelect: 'Sprache'
+  overridesAnchor: Überschreibungen
+  pathOverrideOption: Ausgabe-Pfad Überschreibung aktivieren
+  filenameOverrideOption: Ausgabe-Dateiname Überschreibung aktivieren
+  customFilename: Custom filename (leave blank to use default)
+  customPath: Benutzerdefinierter Pfad
+  customArgs: Benutzerdefinierte yt-dlp Argumente aktivieren (viel Macht = viel Verantwortung)
+  customArgsInput: Benutzerdefinierte yt-dlp Argumente
+  rpcConnErr: Fehler beim Verbinden mit RPC Server
+  splashText: Keine aktiven Downloads
+  archiveTitle: Archiv
+  clipboardAction: URL in Zwischenablage kopiert
+  playlistCheckbox: Playlist herunterladen (es wird einige Zeit dauern, nach dem Absenden können Sie dieses Fenster schließen)
+  restartAppMessage: Erfordert ein Neuladen der Seite, um wirksam zu werden
+  servedFromReverseProxyCheckbox: Ist hinter einem Reverse Proxy Unterordner
+  newDownloadButton: Neuer Download
+  homeButtonLabel: Home
+  archiveButtonLabel: Archiv
+  settingsButtonLabel: Einstellungen
+  rpcAuthenticationLabel: RPC Authentifizierung
+  themeTogglerLabel: Modus Umschalter
+  loadingLabel: Lädt...
+  appTitle: App Titel
+  savedTemplates: Gespeicherte Vorlage
+  templatesEditor: Vorlagen Bearbeiter
+  templatesEditorNameLabel: Vorlagen Name
+  templatesEditorContentLabel: Vorlagen Inhalt
+  logsTitle: 'Logs'
+  awaitingLogs: 'Awaiting logs...'
+  bulkDownload: 'Download files in a zip archive'
+  rpcPollingTimeTitle: RPC-Abfragezeit
+  rpcPollingTimeDescription: Ein kürzeres Intervall führt zu einer höheren CPU-Auslastung (Server- und Clientseite)
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Waiting/Wait start
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completed
+  livestreamStatusErrored: Errored
+  livestreamStatusUnknown: Unknown
+  livestreamDownloadInfo: |
+    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    Once started the livestream will be migrated to the downloads page.
+  livestreamExperimentalWarning: This feature is still experimental. Something might break!
+  accentSelect: 'Accent'
+  urlBase: URL-Basis für Reverse-Proxy-Unterstützung (Unterverzeichnis), standardmäßig leer

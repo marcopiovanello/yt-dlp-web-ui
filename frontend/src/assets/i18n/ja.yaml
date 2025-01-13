@@ -1,0 +1,64 @@
+keys:
+  urlInput: YouTubeまたはサポート済み動画のURL
+  statusTitle: 状態
+  statusReady: 準備
+  selectFormatButton: フォーマット選択
+  startButton: 開始
+  abortAllButton: すべて中止
+  updateBinButton: yt-dlp更新
+  darkThemeButton: 黒テーマ
+  lightThemeButton: 白テーマ
+  settingsAnchor: 設定
+  serverAddressTitle: サーバーアドレス
+  serverPortTitle: ポート番号
+  extractAudioCheckbox: 音質
+  noMTimeCheckbox: ファイル時間の修正をしない
+  bgReminder: このページを閉じてもバックグラウンドでダウンロードを続けます
+  toastConnected: '接続中 '
+  toastUpdated: yt-dlpを更新しました!
+  formatSelectionEnabler: 選択可能な動画/音源
+  themeSelect: 'テーマ'
+  languageSelect: '言語'
+  overridesAnchor: 上書き
+  pathOverrideOption: 保存するディレクトリ
+  filenameOverrideOption: ファイル名の上書き
+  customFilename:  (空白の場合は元のファイル名)
+  customPath: 保存先
+  customArgs: yt-dlpのオプションの有効化 (最適設定にする場合)
+  customArgsInput: yt-dlpのオプション
+  rpcConnErr: RPCサーバーへの接続中にエラーが発生しました
+  splashText: アクティブなダウンロードはありません
+  archiveTitle: アーカイブ
+  clipboardAction: URLをクリップボードにコピーしました
+  playlistCheckbox: プレイリストをダウンロード (これには時間がかかりますが、処理中はウィンドウを閉じることができます)
+  servedFromReverseProxyCheckbox: リバースプロキシのサブフォルダにあります
+  newDownloadButton: 新しくダウンロード
+  homeButtonLabel: ホーム
+  archiveButtonLabel: アーカイブ
+  settingsButtonLabel: 設定
+  rpcAuthenticationLabel: RPC認証
+  themeTogglerLabel: テーマ切り替え
+  loadingLabel: 読み込み中...
+  appTitle: アプリタイトル
+  savedTemplates: 保存したテンプレート
+  templatesEditor: テンプレートエディター
+  templatesEditorNameLabel: テンプレート名
+  templatesEditorContentLabel: テンプレート内容
+  logsTitle: 'ログ'
+  awaitingLogs: 'ログを待機中...'
+  bulkDownload: 'ダウンロードしたファイルをZIPで保存'
+  livestreamURLInput: ライブストリームURL
+  livestreamStatusWaiting: 開始を待っています
+  livestreamStatusDownloading: ダウンロード中
+  livestreamStatusCompleted: 完了
+  livestreamStatusErrored: エラー
+  livestreamStatusUnknown: 不明
+  livestreamDownloadInfo: |
+    まだ開始されていないライブストリームを監視します。各プロセスは、--wait-for-video 10 で実行されます。
+    すでに開始されているライブストリームが提供された場合、ダウンロードは継続されますが進行状況は追跡されません。
+    ライブストリームが開始されると、ダウンロードページに移動されます。
+  livestreamExperimentalWarning: この機能は実験的なものです。何かが壊れるかもしれません！
+  accentSelect: 'Accent'
+  urlBase: URL base, for reverse proxy support (subdir), defaults to empty
+  rpcPollingTimeTitle: RPC polling time
+  rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)

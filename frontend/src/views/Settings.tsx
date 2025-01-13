@@ -18,7 +18,7 @@ import {
   capitalize
 } from '@mui/material'
 import { useAtom } from 'jotai'
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Subject,
   debounceTime,
@@ -50,6 +50,7 @@ import CookiesTextField from '../components/CookiesTextField'
 import UpdateBinaryButton from '../components/UpdateBinaryButton'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
+import Translator from '../lib/i18n'
 import { validateDomain, validateIP } from '../utils'
 
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
@@ -81,6 +82,9 @@ export default function Settings() {
   const baseURL$ = useMemo(() => new Subject<string>(), [])
   const serverAddr$ = useMemo(() => new Subject<string>(), [])
   const serverPort$ = useMemo(() => new Subject<string>(), [])
+
+  const [, updateState] = useState({})
+  const forceUpdate = useCallback(() => updateState({}), [])
 
   useEffect(() => {
     const sub = baseURL$
@@ -133,6 +137,11 @@ export default function Settings() {
    */
   const handleLanguageChange = (event: SelectChangeEvent<Language>) => {
     setLanguage(event.target.value as Language)
+
+    Translator.instance.setLanguage(event.target.value)
+    setTimeout(() => {
+      forceUpdate()
+    }, 100)
   }
 
   /**
