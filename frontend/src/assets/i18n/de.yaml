@@ -6,10 +6,10 @@ keys:
   startButton: Start
   abortAllButton: Alle Abbrechen
   updateBinButton: yt-dlp Binärdatei aktualisieren
-  darkThemeButton: Dunkel Modus
-  lightThemeButton: Hell Modus
+  darkThemeButton: Dunkler Modus
+  lightThemeButton: Heller Modus
   settingsAnchor: Einstellungen
-  serverAddressTitle: Server Adresse
+  serverAddressTitle: Adresse des Servers
   serverPortTitle: Port
   extractAudioCheckbox: Audio extrahieren
   noMTimeCheckbox: Datei-Änderungszeitpunkt nicht festlegen
@@ -22,9 +22,9 @@ keys:
   overridesAnchor: Überschreibungen
   pathOverrideOption: Ausgabe-Pfad Überschreibung aktivieren
   filenameOverrideOption: Ausgabe-Dateiname Überschreibung aktivieren
-  customFilename: Custom filename (leave blank to use default)
+  customFilename: Benutzerdefinierter Dateiname (Leer lassen um Standardwert zu nutzen)
   customPath: Benutzerdefinierter Pfad
-  customArgs: Benutzerdefinierte yt-dlp Argumente aktivieren (viel Macht = viel Verantwortung)
+  customArgs: Benutzerdefinierte yt-dlp Argumente aktivieren (Auf viel Macht folgt große Verantwortung)
   customArgsInput: Benutzerdefinierte yt-dlp Argumente
   rpcConnErr: Fehler beim Verbinden mit RPC Server
   splashText: Keine aktiven Downloads
@@ -42,24 +42,31 @@ keys:
   loadingLabel: Lädt...
   appTitle: App Titel
   savedTemplates: Gespeicherte Vorlage
-  templatesEditor: Vorlagen Bearbeiter
+  templatesEditor: Vorlageneditor
   templatesEditorNameLabel: Vorlagen Name
   templatesEditorContentLabel: Vorlagen Inhalt
-  logsTitle: 'Logs'
-  awaitingLogs: 'Awaiting logs...'
-  bulkDownload: 'Download files in a zip archive'
+  logsTitle: 'Logausgabe'
+  awaitingLogs: 'Warte auf Log ...'
+  bulkDownload: 'Alles in einem ZIP-Archiv herunterladen'
   rpcPollingTimeTitle: RPC-Abfragezeit
-  rpcPollingTimeDescription: Ein kürzeres Intervall führt zu einer höheren CPU-Auslastung (Server- und Clientseite)
+  rpcPollingTimeDescription: Ein kürzerer Intervall führt zu einer höheren CPU-Auslastung (Server- und Clientseite)
+  templatesReloadInfo: Um eine neue Vorlage zu registrieren, muss die Seite möglicherweise neu geladen werden.
   livestreamURLInput: Livestream URL
-  livestreamStatusWaiting: Waiting/Wait start
-  livestreamStatusDownloading: Downloading
-  livestreamStatusCompleted: Completed
-  livestreamStatusErrored: Errored
-  livestreamStatusUnknown: Unknown
+  livestreamStatusWaiting: Warte auf Start
+  livestreamStatusDownloading: Herunterladen
+  livestreamStatusCompleted: Abgeschlossen
+  livestreamStatusErrored: Fehlerhaft
+  livestreamStatusUnknown: Status unbekannt
+  livestreamNoMonitoring: Aktuell wird kein Livestream überwacht
   livestreamDownloadInfo: |
-    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
-    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
-    Once started the livestream will be migrated to the downloads page.
-  livestreamExperimentalWarning: This feature is still experimental. Something might break!
-  accentSelect: 'Accent'
+    Damit wird der noch nicht gestartete Livestream überwacht. Jeder Prozess wird mit --wait-for-video 10 ausgeführt.
+    Wenn ein bereits gestarteter Livestream vorhanden ist, wird er zwar heruntergeladen, aber sein Fortschritt wird nicht verfolgt.
+    Sobald der Livestream gestartet ist, wird er auf der Download-Seite angezeigt.
+  livestreamExperimentalWarning: Dieses Feature ist aktuell noch experimentell, sei vorsichtig, denn es könnte sein, dass etwas nicht genau funktioniert!
+  accentSelect: 'Farbtöne'
   urlBase: URL-Basis für Reverse-Proxy-Unterstützung (Unterverzeichnis), standardmäßig leer
+  generalDownloadSettings: 'Allgemeine Download Einstellungen'
+  deleteCookies: 'Cookies löschen'
+  noFilesFound: 'Keine Dateien gefunden'
+  tableView: 'Tabellenansicht'
+  deleteSelected: 'Ausgewählte löschen'

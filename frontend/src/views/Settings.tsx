@@ -284,8 +284,8 @@ export default function Settings() {
                 label={i18n.t('themeSelect')}
                 onChange={handleThemeChange}
               >
-                <MenuItem value="light">Light</MenuItem>
-                <MenuItem value="dark">Dark</MenuItem>
+                <MenuItem value="light">{i18n.t('lightThemeButton')}</MenuItem>
+                <MenuItem value="dark">{i18n.t('darkThemeButton')}</MenuItem>
                 <MenuItem value="system">System</MenuItem>
               </Select>
             </FormControl>
@@ -308,7 +308,7 @@ export default function Settings() {
           </Grid>
         </Grid>
         <Typography variant="h6" color="primary" sx={{ mt: 2, mb: 0.5 }}>
-          General download settings
+          {i18n.t('generalDownloadSettings')}
         </Typography>
 
         <FormControlLabel

@@ -46,12 +46,14 @@ keys:
   logsTitle: 'Логи'
   awaitingLogs: 'Ожидание логов...'
   bulkDownload: 'Скачать файлы в zip архиве'
+  templatesReloadInfo: To register a new template it might need a page reload.
   livestreamURLInput: Livestream URL
   livestreamStatusWaiting: Waiting/Wait start
   livestreamStatusDownloading: Downloading
   livestreamStatusCompleted: Completed
   livestreamStatusErrored: Errored
   livestreamStatusUnknown: Unknown
+  livestreamNoMonitoring: No livestreams monitored
   livestreamDownloadInfo: |
     This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
     If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
@@ -61,3 +63,8 @@ keys:
   urlBase: URL base, for reverse proxy support (subdir), defaults to empty
   rpcPollingTimeTitle: RPC polling time
   rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
+  generalDownloadSettings: 'General Download Settings'
+  deleteCookies: Delete Cookies
+  noFilesFound: 'No Files Found'
+  tableView: 'Table View'
+  deleteSelected: 'Delete selected'

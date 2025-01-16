@@ -34,7 +34,7 @@ const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
     >
       <SpeedDialAction
         icon={listView ? <ViewAgendaIcon /> : <FormatListBulleted />}
-        tooltipTitle={listView ? 'Card view' : 'Table view'}
+        tooltipTitle={listView ? 'Card view' : i18n.t('tableView')}
         onClick={() => setListView(state => !state)}
       />
       <SpeedDialAction

@@ -58,9 +58,15 @@ keys:
   livestreamStatusCompleted: Concluído
   livestreamStatusErrored: Erro
   livestreamStatusUnknown: Desconhecido
+  livestreamNoMonitoring: No livestreams monitored
   livestreamDownloadInfo: |
     Isso monitorará uma transmissão ao vivo que ainda não começou. Cada processo será executado com --wait-for-video 10.
     Se uma transmissão ao vivo já iniciada for fornecida, ela ainda será baixada, mas seu progresso não será rastreado.
     Uma vez iniciada, a transmissão ao vivo será migrada para a página de downloads.
   livestreamExperimentalWarning: Este recurso ainda é experimental. Algo pode quebrar!
   accentSelect: 'Accent'
+  generalDownloadSettings: 'General Download Settings'
+  deleteCookies: Delete Cookies
+  noFilesFound: 'No Files Found'
+  tableView: 'Table View'
+  deleteSelected: 'Delete selected'

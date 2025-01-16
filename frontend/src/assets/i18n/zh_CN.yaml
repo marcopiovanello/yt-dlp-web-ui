@@ -48,12 +48,14 @@ keys:
   logsTitle: '日志'
   awaitingLogs: '正在等待日志…'
   bulkDownload: '下载 zip 压缩包中的文件'
+  templatesReloadInfo: To register a new template it might need a page reload.
   livestreamURLInput: 直播 URL
   livestreamStatusWaiting: 等待直播开始
   livestreamStatusDownloading: 下载中
   livestreamStatusCompleted: 已完成
   livestreamStatusErrored: 发生错误
   livestreamStatusUnknown: 未知
+  livestreamNoMonitoring: No livestreams monitored
   livestreamDownloadInfo: |
     本功能将会监控即将开始的直播流，每个进程都会传入参数：--wait-for-video 10 （重试间隔10秒）
     如果直播已经开始，那么依然可以下载，但是不会记录下载进度。
@@ -63,3 +65,8 @@ keys:
   urlBase: URL base, for reverse proxy support (subdir), defaults to empty
   rpcPollingTimeTitle: RPC polling time
   rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
+  generalDownloadSettings: 'General Download Settings'
+  deleteCookies: Delete Cookies
+  noFilesFound: 'No Files Found'
+  tableView: 'Table View'
+  deleteSelected: 'Delete selected'

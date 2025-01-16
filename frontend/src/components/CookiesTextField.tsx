@@ -11,6 +11,9 @@ import { useSubscription } from '../hooks/observable'
 import { useToast } from '../hooks/toast'
 import { ffetch } from '../lib/httpClient'
 import { useAtomValue } from 'jotai'
+import { useI18n } from '../hooks/useI18n'
+
+const { i18n } = useI18n()
 
 const validateCookie = (cookie: string) => pipe(
   cookie,
@@ -164,7 +167,7 @@ const CookiesTextField: React.FC = () => {
         defaultValue={savedCookies}
         onChange={(e) => cookies$.next(e.currentTarget.value)}
       />
-      <Button onClick={deleteCookies}>Delete cookies</Button>
+      <Button onClick={deleteCookies}>{i18n.t('deleteCookies')}</Button>
     </>
   )
 }

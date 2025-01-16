@@ -47,12 +47,14 @@ keys:
   logsTitle: 'ログ'
   awaitingLogs: 'ログを待機中...'
   bulkDownload: 'ダウンロードしたファイルをZIPで保存'
+  templatesReloadInfo: To register a new template it might need a page reload.
   livestreamURLInput: ライブストリームURL
   livestreamStatusWaiting: 開始を待っています
   livestreamStatusDownloading: ダウンロード中
   livestreamStatusCompleted: 完了
   livestreamStatusErrored: エラー
   livestreamStatusUnknown: 不明
+  livestreamNoMonitoring: No livestreams monitored
   livestreamDownloadInfo: |
     まだ開始されていないライブストリームを監視します。各プロセスは、--wait-for-video 10 で実行されます。
     すでに開始されているライブストリームが提供された場合、ダウンロードは継続されますが進行状況は追跡されません。
@@ -62,3 +64,8 @@ keys:
   urlBase: URL base, for reverse proxy support (subdir), defaults to empty
   rpcPollingTimeTitle: RPC polling time
   rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
+  generalDownloadSettings: 'General Download Settings'
+  deleteCookies: Delete Cookies
+  noFilesFound: 'No Files Found'
+  tableView: 'Table View'
+  deleteSelected: 'Delete selected'

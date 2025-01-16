@@ -216,7 +216,7 @@ export default function Downloaded() {
         onClick={() => setShowMenu(false)}
       >
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          {selectable.length === 0 && 'No files found'}
+          {selectable.length === 0 && i18n.t('noFilesFound')}
           {selectable.map((file, idx) => (
             <ListItem
               onContextMenu={(e) => {
@@ -275,7 +275,7 @@ export default function Downloaded() {
       >
         <SpeedDialAction
           icon={<DeleteForeverIcon />}
-          tooltipTitle={`Delete selected`}
+          tooltipTitle={i18n.t('deleteSelected')}
           tooltipOpen
           onClick={() => {
             if (selected$.value.length > 0) {
