@@ -19,3 +19,4 @@ languages:
   swedish: sv.yaml
   ukrainian: uk.yaml
   chinese: zh_CN.yaml
+  hungarian: hu.yaml

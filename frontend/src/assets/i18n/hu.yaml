@@ -1,0 +1,72 @@
+keys:
+  urlInput: Video URL (soronként egy)
+  statusTitle: Állapot
+  statusReady: Előkészítve
+  selectFormatButton: Válassz formátumot
+  startButton: Indítás
+  abortAllButton: Összes megszakítása
+  updateBinButton: yt-dlp bináris frissítése
+  darkThemeButton: Sötét téma
+  lightThemeButton: Világos téma
+  settingsAnchor: Beállítások
+  serverAddressTitle: Szerver címe
+  serverPortTitle: Port
+  extractAudioCheckbox: Audio konvertálása
+  noMTimeCheckbox: Fájl módosítás időpontja ne legyen beállítva
+  bgReminder: Miután a lap bezárásra kerül, a letöltés folytatódni fog a háttérben.
+  toastConnected: 'Kapcsolódva: '
+  toastUpdated: yt-dlp bináris frissítése sikeres volt!
+  formatSelectionEnabler: Video/audio formátum manuális kiválasztásának engedélyezése
+  themeSelect: 'Téma'
+  languageSelect: 'Nyelv'
+  overridesAnchor: Felülbírálások
+  pathOverrideOption: Letöltési útvonal felülbírálása
+  filenameOverrideOption: Letöltési fájlnév felülbírálása
+  customFilename: Egyedi fájlnév (hagyd üresen, hogy a fájlnév automatikusan generálódjon)
+  customPath: Egyedi útvonal
+  customArgs: Egyedi yt-dlp argumentumok (Nagy hatalommal nagy felelősség jár.)
+  customArgsInput: Egyedi yt-dlp argumentumok
+  rpcConnErr: Hiba történt az RPC szerver történő kapcsolódáskor
+  splashText: Nincs aktív letöltés
+  archiveTitle: Archívum
+  clipboardAction: URL a vágólapra másolva.
+  playlistCheckbox: Lejátszási lista letöltése (Több időt vehet igénybe. A letöltés a háttérben történik, a böngészőablak szabadon bezárható.)
+  restartAppMessage: Az oldal újratöltése lehet szükséges a változtatások megjelenítéséhez.
+  servedFromReverseProxyCheckbox: Reverse proxy mögötti működés
+  urlBase: URL base, reverse proxy támogatásához (subdir), alapból üres
+  newDownloadButton: Új letöltés
+  homeButtonLabel: Kezdőlap
+  archiveButtonLabel: Archívum
+  settingsButtonLabel: Beállítások
+  rpcAuthenticationLabel: RPC bejelentkezés
+  themeTogglerLabel: Témaválasztó
+  loadingLabel: Betöltés...
+  appTitle: Alkalmazás címe
+  savedTemplates: Mentett sablonok
+  templatesEditor: Sablonszerkesztő
+  templatesEditorNameLabel: Sablon neve
+  templatesEditorContentLabel: Sablon tartalma
+  logsTitle: 'Naplók'
+  awaitingLogs: 'Napló letöltése...'
+  bulkDownload: 'Fájlok letöltése ZIP archívumként'
+  rpcPollingTimeTitle: RPC lekérdezési időköz
+  rpcPollingTimeDescription: Rövidebb időköz nagyobb processzor terheléssel járhat (mind szerver és böngésző oldalon is)
+  templatesReloadInfo: Az új sablon megjelenéséhez újra kell tölteni az oldalt.
+  livestreamURLInput: Élő stream URL
+  livestreamStatusWaiting: Várakozás a kezdésre
+  livestreamStatusDownloading: Letöltés
+  livestreamStatusCompleted: Letöltve
+  livestreamStatusErrored: Hiba
+  livestreamStatusUnknown: Ismeretlen
+  livestreamNoMonitoring: Nincsenek figyelt élő adások
+  livestreamDownloadInfo: |
+    Ez figyelni fog egy még el nem indított élő közvetítést. Minden folyamat a --wait-for-video 10 paraméterrel lesz végrehajtva.
+    Ha egy már elindított élő közvetítés van megadva, az továbbra is letöltésre kerül, de a folyamatát nem követi nyomon.
+    Amint elindul, az élő közvetítés átkerül a letöltések oldalra..
+  livestreamExperimentalWarning: Ez a funkció még kísérleti. Nem garantált a hibamentes működés.
+  accentSelect: 'Kiemelt szín'
+  generalDownloadSettings: 'Általános letöltési beállítások'
+  deleteCookies: Sütik törlése
+  noFilesFound: 'Nem található fájlok'
+  tableView: 'Táblázatos Nézet'
+  deleteSelected: 'Kiválasztottak törlése'
