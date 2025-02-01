@@ -22,6 +22,7 @@ keys:
   overridesAnchor: Überschreibungen
   pathOverrideOption: Ausgabe-Pfad Überschreibung aktivieren
   filenameOverrideOption: Ausgabe-Dateiname Überschreibung aktivieren
+  autoFileExtensionOption: Dateierweiterung automatisch hinzufügen
   customFilename: Benutzerdefinierter Dateiname (Leer lassen um Standardwert zu nutzen)
   customPath: Benutzerdefinierter Pfad
   customArgs: Benutzerdefinierte yt-dlp Argumente aktivieren (Auf viel Macht folgt große Verantwortung)

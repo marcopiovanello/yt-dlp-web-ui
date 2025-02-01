@@ -22,6 +22,7 @@ keys:
   overridesAnchor: 上書き
   pathOverrideOption: 保存するディレクトリ
   filenameOverrideOption: ファイル名の上書き
+  autoFileExtensionOption: 自動ファイル拡張子
   customFilename:  (空白の場合は元のファイル名)
   customPath: 保存先
   customArgs: yt-dlpのオプションの有効化 (最適設定にする場合)

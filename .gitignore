@@ -3,6 +3,7 @@
 result/
 result
 dist
+.pnpm-store/
 .pnpm-debug.log
 node_modules
 .env
@@ -26,3 +27,4 @@ frontend/.pnp.loader.mjs
 frontend/.yarn/install-state.gz
 .db.lock
 livestreams.dat
+.vite/deps

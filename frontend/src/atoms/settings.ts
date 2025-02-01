@@ -40,6 +40,7 @@ export interface SettingsState {
   cliArgs: string
   formatSelection: boolean
   fileRenaming: boolean
+  autoFileExtension: boolean
   pathOverriding: boolean
   enableCustomArgs: boolean
   listView: boolean
@@ -59,12 +60,12 @@ export const themeState = atomWithStorage<Theme>(
 
 export const serverAddressState = atomWithStorage<string>(
   'server-addr',
-  localStorage.getItem('server-addr') || window.location.hostname
+  'localhost' // || localStorage.getItem('server-addr') || window.location.hostname
 )
 
 export const serverPortState = atomWithStorage<number>(
   'server-port',
-  Number(localStorage.getItem('server-port')) || Number(window.location.port)
+  12345 // Number(localStorage.getItem('server-port')) || Number(window.location.port)
 )
 
 export const latestCliArgumentsState = atomWithStorage<string>(
@@ -80,6 +81,11 @@ export const formatSelectionState = atomWithStorage(
 export const fileRenamingState = atomWithStorage(
   'file-renaming',
   localStorage.getItem('file-renaming') === 'true'
+)
+
+export const autoFileExtensionState = atomWithStorage(
+  'auto-file-extension',
+  localStorage.getItem('auto-file-extension') === 'true'
 )
 
 export const pathOverridingState = atomWithStorage(
@@ -168,6 +174,7 @@ export const settingsState = atom<SettingsState>((get) => ({
   cliArgs: get(latestCliArgumentsState),
   formatSelection: get(formatSelectionState),
   fileRenaming: get(fileRenamingState),
+  autoFileExtension: get(autoFileExtensionState),
   pathOverriding: get(pathOverridingState),
   enableCustomArgs: get(enableCustomArgsState),
   listView: get(listViewState),

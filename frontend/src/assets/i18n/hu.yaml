@@ -22,6 +22,7 @@ keys:
   overridesAnchor: Felülbírálások
   pathOverrideOption: Letöltési útvonal felülbírálása
   filenameOverrideOption: Letöltési fájlnév felülbírálása
+  autoFileExtensionOption: Automatikus fájlkiterjesztés
   customFilename: Egyedi fájlnév (hagyd üresen, hogy a fájlnév automatikusan generálódjon)
   customPath: Egyedi útvonal
   customArgs: Egyedi yt-dlp argumentumok (Nagy hatalommal nagy felelősség jár.)

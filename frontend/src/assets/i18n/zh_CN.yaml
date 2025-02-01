@@ -22,6 +22,7 @@ keys:
   overridesAnchor: 覆盖
   pathOverrideOption: 启用输出路径覆盖
   filenameOverrideOption: 启用输出文件名覆盖
+  autoFileExtensionOption: 自动文件扩展名
   customFilename: 自定义文件名（留空使用默认值）
   customPath: 自定义路径
   customArgs: 启用自定义 yt-dlp 参数（能力越大 = 责任越大）

@@ -21,6 +21,7 @@ keys:
   overridesAnchor: Anul·lacions
   pathOverrideOption: Sobreescriure en la ruta de sortida
   filenameOverrideOption: Sobreescriure el nom del fitxer
+  autoFileExtensionOption: Afegeix l'extensió de fitxer automàticament
   customFilename: Nom d'arxiu personalitzat (en blanc per utilitzar el predeterminat)
   customPath: Ruta personalitzada
   customArgs: Habilitar els arguments yt-dlp personalitzats (un gran poder comporta una gran responsabilitat)

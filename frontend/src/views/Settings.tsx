@@ -36,6 +36,7 @@ import {
   appTitleState,
   enableCustomArgsState,
   fileRenamingState,
+  autoFileExtensionState,
   formatSelectionState,
   languageState,
   languages,
@@ -61,6 +62,7 @@ export default function Settings() {
   const [formatSelection, setFormatSelection] = useAtom(formatSelectionState)
   const [pathOverriding, setPathOverriding] = useAtom(pathOverridingState)
   const [fileRenaming, setFileRenaming] = useAtom(fileRenamingState)
+  const [autoFileExtension, setAutoFileExtension] = useAtom(autoFileExtensionState)
   const [enableArgs, setEnableArgs] = useAtom(enableCustomArgsState)
 
   const [serverAddr, setServerAddr] = useAtom(serverAddressState)
@@ -343,12 +345,30 @@ export default function Settings() {
                 <Switch
                   defaultChecked={fileRenaming}
                   onChange={() => {
+                    if (fileRenaming) {
+                      setAutoFileExtension(false)
+                    }
                     setFileRenaming(state => !state)
                   }}
                 />
               }
               label={i18n.t('filenameOverrideOption')}
             />
+            {
+              <FormControlLabel
+                control={
+                  <Switch
+                    disabled={!fileRenaming}
+                    checked={fileRenaming ? autoFileExtension : false}
+                    defaultChecked={autoFileExtension}
+                    onChange={() => {
+                      setAutoFileExtension(state => !state)
+                    }}
+                  />
+                }
+                label={i18n.t('autoFileExtensionOption')}
+              /> 
+            }
             <FormControlLabel
               control={
                 <Switch

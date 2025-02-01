@@ -21,6 +21,7 @@ keys:
   overridesAnchor: Anulaciones
   pathOverrideOption: Sobreescribir en la ruta de salida
   filenameOverrideOption: Sobreescribir el nombre del fichero
+  autoFileExtensionOption: Agregar extensión de archivo automáticamente
   customFilename: Nombre de archivo personalizado (en blanco para usar el predeterminado)
   customPath: Ruta personalizada
   customArgs: Habilitar los argumentos yt-dlp personalizados (un gran poder conlleva una gran responsabilidad)

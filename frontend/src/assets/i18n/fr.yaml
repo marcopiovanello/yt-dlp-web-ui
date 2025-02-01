@@ -22,6 +22,7 @@ keys:
   overridesAnchor: Remplacer
   pathOverrideOption: Activer le remplacement du chemin de sortie
   filenameOverrideOption: Activer le remplacement du nom du fichier de sortie
+  autoFileExtensionOption: Ajouter automatiquement l'extension de fichier
   customFilename: Nom de fichier personnalisé (laisser vide pour utiliser le nom par défaut)
   customPath: Chemin personnalisé
   customArgs: Activer les args personnalisés yt-dlp (grand pouvoir = grandes responsabilités)

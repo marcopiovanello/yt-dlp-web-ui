@@ -11,7 +11,10 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  MenuItem,
   Paper,
+  Select,
+  SelectChangeEvent,
   TextField
 } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
@@ -83,6 +86,8 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
     filenameTemplateState
   )
 
+  const [fileExtension, setFileExtension] = useState('.%(ext)s')
+
   const [url, setUrl] = useState('')
 
   const [isPlaylist, setIsPlaylist] = useState(false)
@@ -115,7 +120,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
         url: immediate || line,
         args: `${toFormatArgs(codes)} ${downloadTemplate}`,
         pathOverride: downloadPath ?? '',
-        renameTo: settings.fileRenaming ? filenameTemplate : '',
+        renameTo: settings.fileRenaming ? filenameTemplate + (settings.autoFileExtension ? fileExtension : '') : '',
         playlist: isPlaylist,
       })
 
@@ -167,6 +172,10 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
 
   const handleFilenameTemplateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilenameTemplate(e.target.value)
+  }
+
+  const handleFileExtensionChange = (e: SelectChangeEvent<string>) => {
+    setFileExtension(e.target.value)
   }
 
   const handleCustomArgsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,7 +295,15 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                   }
                   {
                     settings.fileRenaming &&
-                    <Grid item xs={settings.pathOverriding ? 8 : 12}>
+                    <Grid item xs={
+                        !settings.autoFileExtension && !settings.pathOverriding
+                          ? 12
+                          : !settings.autoFileExtension && settings.pathOverriding
+                            ? 8
+                            : settings.autoFileExtension && !settings.pathOverriding
+                              ? 10
+                              : 6
+                      }>
                       <TextField
                         sx={{ mt: 1 }}
                         ref={customFilenameInputRef}
@@ -300,6 +317,22 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                           (settings.formatSelection && downloadFormats != null)
                         }
                       />
+                    </Grid>
+                  }
+                  {
+                    settings.autoFileExtension &&
+                    <Grid item xs={2}>
+                      <Select
+                        sx={{ mt: 1 }}
+                        fullWidth
+                        label={i18n.t('autoFileExtension')}
+                        value={fileExtension}
+                        onChange={handleFileExtensionChange}
+                        variant="outlined">
+                          <MenuItem value=".%(ext)s">Auto</MenuItem>
+                          <MenuItem value=".mp4">mp4</MenuItem>
+                          <MenuItem value=".mkv">mkv</MenuItem>
+                        </Select>
                     </Grid>
                   }
                   {

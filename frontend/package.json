@@ -3,7 +3,7 @@
   "version": "3.2.3",
   "description": "Frontend compontent of yt-dlp-webui",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build"
   },
   "author": "marcopiovanello",

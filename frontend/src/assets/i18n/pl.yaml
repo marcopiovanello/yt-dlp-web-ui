@@ -21,6 +21,7 @@ keys:
   overridesAnchor: Przedefiniuj
   pathOverrideOption: Aktywuj zastąpienie ścieżki źródłowej
   filenameOverrideOption: Aktywuj zastępowanie nazwy pliku źródłowego
+  autoFileExtensionOption: Automatyczne rozszerzenie pliku
   customFilename: Wprowadź nazwę pliku (pozostaw puste, aby użyć nazwy domyślnej)
   customPath: Ustaw ścieżkę
   customArgs: Uwzględnij konfigurowalne argumenty yt-dlp (wielka moc = wielka odpowiedzialność)

@@ -22,6 +22,7 @@ keys:
   overridesAnchor: Överskrivningar
   pathOverrideOption: Tillåt överskrivning av filsökvägen
   filenameOverrideOption: Tillåt överskrivning av filnamn
+  autoFileExtensionOption: Lägg till filändelse automatiskt
   customFilename: Eget filnamn (lämna blankt för standardnamn)
   customPath: Egen filsökväg
   customArgs: Tillåt egna yt-dlp-argument (frihet under ansvar!)

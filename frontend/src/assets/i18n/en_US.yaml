@@ -22,6 +22,7 @@ keys:
   overridesAnchor: Overrides
   pathOverrideOption: Enable output path overriding
   filenameOverrideOption: Enable output file name overriding
+  autoFileExtensionOption: Automatically add file extension
   customFilename: Custom filename (leave blank to use default)
   customPath: Custom path
   customArgs: Enable custom yt-dlp args (great power = great responsibilities)
