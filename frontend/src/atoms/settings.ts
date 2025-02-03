@@ -60,12 +60,12 @@ export const themeState = atomWithStorage<Theme>(
 
 export const serverAddressState = atomWithStorage<string>(
   'server-addr',
-  'localhost' // || localStorage.getItem('server-addr') || window.location.hostname
+  localStorage.getItem('server-addr') || window.location.hostname
 )
 
 export const serverPortState = atomWithStorage<number>(
   'server-port',
-  12345 // Number(localStorage.getItem('server-port')) || Number(window.location.port)
+  Number(localStorage.getItem('server-port')) || Number(window.location.port)
 )
 
 export const latestCliArgumentsState = atomWithStorage<string>(
