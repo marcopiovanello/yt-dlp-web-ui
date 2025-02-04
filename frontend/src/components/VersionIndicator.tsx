@@ -7,7 +7,7 @@ const VersionIndicator: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-      <Chip label={`UI v3.2.4`} variant="outlined" size="small" />
+      <Chip label={`UI v3.2.5`} variant="outlined" size="small" />
       <Chip label={`RPC v${version.rpcVersion}`} variant="outlined" size="small" />
       <Chip label={`yt-dlp v${version.ytdlpVersion}`} variant="outlined" size="small" />
     </div>
