@@ -28,14 +28,13 @@ import {
   FC,
   Suspense,
   forwardRef,
-  useEffect,
   useRef,
   useState,
   useTransition
 } from 'react'
 import {
+  cookiesTemplateState,
   customArgsState,
-  downloadTemplateState,
   filenameTemplateState,
   savedTemplatesState
 } from '../atoms/downloadTemplate'
@@ -47,6 +46,7 @@ import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import type { DLMetadata } from '../types'
 import { toFormatArgs } from '../utils'
+import CustomArgsTextField from './CustomArgsTextField'
 import ExtraDownloadOptions from './ExtraDownloadOptions'
 import LoadingBackdrop from './LoadingBackdrop'
 
@@ -69,16 +69,15 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const settings = useAtomValue(settingsState)
   const isConnected = useAtomValue(connectedState)
   const availableDownloadPaths = useAtomValue(availableDownloadPathsState)
-  const downloadTemplate = useAtomValue(downloadTemplateState)
   const savedTemplates = useAtomValue(savedTemplatesState)
+  const customArgs = useAtomValue(customArgsState)
+  const cookies = useAtomValue(cookiesTemplateState)
 
   const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
   const [pickedVideoFormat, setPickedVideoFormat] = useState('')
   const [pickedAudioFormat, setPickedAudioFormat] = useState('')
   const [pickedBestFormat, setPickedBestFormat] = useState('')
   const [isFormatsLoading, setIsFormatsLoading] = useState(false)
-
-  const [customArgs, setCustomArgs] = useAtom(customArgsState)
 
   const [downloadPath, setDownloadPath] = useState('')
 
@@ -101,10 +100,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
 
   const [isPending, startTransition] = useTransition()
 
-  useEffect(() => {
-    setCustomArgs('')
-  }, [open])
-
   /**
     * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
   */
@@ -114,6 +109,10 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
       if (pickedVideoFormat !== '') codes.push(pickedVideoFormat)
       if (pickedAudioFormat !== '') codes.push(pickedAudioFormat)
       if (pickedBestFormat !== '') codes.push(pickedBestFormat)
+
+      const downloadTemplate = `${customArgsState} ${cookies}`
+        .replace(/  +/g, ' ')
+        .trim()
 
       await new Promise(r => setTimeout(r, 10))
       client.download({
@@ -176,10 +175,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
 
   const handleFileExtensionChange = (e: SelectChangeEvent<string>) => {
     setFileExtension(e.target.value)
-  }
-
-  const handleCustomArgsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomArgs(e.target.value)
   }
 
   const parseUrlListFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,33 +272,22 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                   />
                 </Grid>
                 <Grid container spacing={1} sx={{ mt: 1 }}>
-                  {
-                    settings.enableCustomArgs &&
+                  {settings.enableCustomArgs &&
                     <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label={i18n.t('customArgsInput')}
-                        variant="outlined"
-                        onChange={handleCustomArgsChange}
-                        value={customArgs}
-                        disabled={
-                          !isConnected ||
-                          (settings.formatSelection && downloadFormats != null)
-                        }
-                      />
+                      <CustomArgsTextField />
                     </Grid>
                   }
                   {
                     settings.fileRenaming &&
                     <Grid item xs={
-                        !settings.autoFileExtension && !settings.pathOverriding
-                          ? 12
-                          : !settings.autoFileExtension && settings.pathOverriding
-                            ? 8
-                            : settings.autoFileExtension && !settings.pathOverriding
-                              ? 10
-                              : 6
-                      }>
+                      !settings.autoFileExtension && !settings.pathOverriding
+                        ? 12
+                        : !settings.autoFileExtension && settings.pathOverriding
+                          ? 8
+                          : settings.autoFileExtension && !settings.pathOverriding
+                            ? 10
+                            : 6
+                    }>
                       <TextField
                         sx={{ mt: 1 }}
                         ref={customFilenameInputRef}
@@ -329,10 +313,10 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                         value={fileExtension}
                         onChange={handleFileExtensionChange}
                         variant="outlined">
-                          <MenuItem value=".%(ext)s">Auto</MenuItem>
-                          <MenuItem value=".mp4">mp4</MenuItem>
-                          <MenuItem value=".mkv">mkv</MenuItem>
-                        </Select>
+                        <MenuItem value=".%(ext)s">Auto</MenuItem>
+                        <MenuItem value=".mp4">mp4</MenuItem>
+                        <MenuItem value=".mkv">mkv</MenuItem>
+                      </Select>
                     </Grid>
                   }
                   {

@@ -6,6 +6,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build"
   },
+  "type": "module",
   "author": "marcopiovanello",
   "license": "GPL-3.0-only",
   "private": true,
