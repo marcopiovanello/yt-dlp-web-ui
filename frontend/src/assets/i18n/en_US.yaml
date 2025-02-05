@@ -27,7 +27,7 @@ keys:
   customPath: Custom path
   customArgs: Enable custom yt-dlp args (great power = great responsibilities)
   customArgsInput: Custom yt-dlp arguments
-  rpcConnErr: Error while conencting to RPC server
+  rpcConnErr: Error while connecting to RPC server
   splashText: No active downloads
   archiveTitle: Archive
   clipboardAction: Copied URL to clipboard

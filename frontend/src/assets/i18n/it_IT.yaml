@@ -1,8 +1,9 @@
 keys:
   urlInput: URL Video (uno per linea)
   statusTitle: Stato
-  startButton: Inizia
   statusReady: Pronto
+  selectFormatButton: Seziona formato
+  startButton: Inizia
   abortAllButton: Termina tutto
   updateBinButton: Aggiorna yt-dlp
   darkThemeButton: Tema scuro
@@ -22,51 +23,60 @@ keys:
   pathOverrideOption: Abilita sovrascrittura percorso di output
   filenameOverrideOption: Abilita sovrascrittura del nome del file di output
   autoFileExtensionOption: Aggiungi estensione automaticamente
-  customFilename: Custom filename (leave blank to use default)
-  customPath: Custom path
-  customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-  customArgsInput: Custom yt-dlp arguments
-  rpcConnErr: Error nella connessione al server RPC
+  customFilename: Nome file personalizzato (lascia vuoto per utilizzare quello predefinito)
+  customPath: Percorso personalizzato
+  customArgs: Abilita argomenti yt-dlp personalizzati (grande potere = grandi responsabilità)
+  customArgsInput: Argomenti yt-dlp personalizzati
+  rpcConnErr: Errore nella connessione al server RPC
   splashText: Nessun download attivo
   archiveTitle: Archivio
   clipboardAction: URL copiato negli appunti
   playlistCheckbox: Download playlist (richiederà tempo, puoi chiudere la finestra dopo l'inoltro)
-  restartAppMessage: La finestra deve essere ricaricata perché abbia effetto
-  servedFromReverseProxyCheckbox: Is behind a reverse proxy
+  restartAppMessage: La finestra deve essere ricaricata affinché abbia effetto
+  servedFromReverseProxyCheckbox: È dietro un reverse proxy
+  urlBase: base URL, per supporto a reverse proxy (subdir), default vuoto
   newDownloadButton: Nuovo download
   homeButtonLabel: Home
-  archiveButtonLabel: Archive
-  settingsButtonLabel: Settings
-  rpcAuthenticationLabel: RPC authentication
-  themeTogglerLabel: Theme toggler
-  loadingLabel: Loading...
+  archiveButtonLabel: Archivio
+  settingsButtonLabel: Impostazioni
+  rpcAuthenticationLabel: Autenticazione RPC
+  themeTogglerLabel: Selettore Tema
+  loadingLabel: Caricamento...
   appTitle: Titolo applicazione
-  savedTemplates: Template salvati
-  templatesEditor: Editor template
-  templatesEditorNameLabel: Nome template
-  templatesEditorContentLabel: Contentunto template
+  savedTemplates: Modelli salvati
+  templatesEditor: Editor modelli
+  templatesEditorNameLabel: Nome modello
+  templatesEditorContentLabel: Contenuto del modello
   logsTitle: 'Logs'
   awaitingLogs: 'Awaiting logs...'
-  bulkDownload: 'Download files in a zip archive'
-  templatesReloadInfo: To register a new template it might need a page reload.
-  livestreamURLInput: Livestream URL
-  livestreamStatusWaiting: Waiting/Wait start
-  livestreamStatusDownloading: Downloading
-  livestreamStatusCompleted: Completed
-  livestreamStatusErrored: Errored
-  livestreamStatusUnknown: Unknown
-  livestreamNoMonitoring: No livestreams monitored
-  livestreamDownloadInfo: |
-    This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
-    If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
-    Once started the livestream will be migrated to the downloads page.
-  livestreamExperimentalWarning: This feature is still experimental. Something might break!
-  accentSelect: 'Accent'
-  urlBase: base URL, per supporto a reverse proxy (subdir), default vuoto
+  bulkDownload: 'Scaricare i file in un archivio zip'
   rpcPollingTimeTitle: Intervallo di polling RPC
   rpcPollingTimeDescription: Un intervallo più corto implica un maggior utilizzo di CPU (lato client e server)
-  generalDownloadSettings: 'General Download Settings'
-  deleteCookies: Delete Cookies
-  noFilesFound: 'No Files Found'
-  tableView: 'Table View'
-  deleteSelected: 'Delete selected'
+  templatesReloadInfo: Per registrare un nuovo modello potrebbe essere necessario ricaricare la pagina.
+  livestreamURLInput: Livestream URL
+  livestreamStatusWaiting: Attesa inizio
+  livestreamStatusDownloading: Downloading
+  livestreamStatusCompleted: Completato
+  livestreamStatusErrored: Errore
+  livestreamStatusUnknown: Sconosciuto
+  livestreamNoMonitoring: Nessun livestream monitorato
+  livestreamDownloadInfo: |
+    Questo monitorerà il livestream ancora da avviare. Ogni processo verrà eseguito con --wait-for-video 10.
+    Se viene fornito un livestream già avviato, questo verrà comunque scaricato, ma il suo progresso non verrà monitorato.
+    Una volta avviato, il livestream verrà migrato nella pagina dei download.
+  livestreamExperimentalWarning: Questa funzione è ancora sperimentale. Qualcosa potrebbe rompersi!
+  accentSelect: 'Accent'
+  generalDownloadSettings: 'Impostazioni generali di download'
+  deleteCookies: Elimina Cookies
+  noFilesFound: 'Nessun file trovato'
+  tableView: 'Vista Tabella'
+  deleteSelected: 'Elimina selezionati'
+  subscriptionsButtonLabel: 'Abbonamenti'
+  subscriptionsEmptyLabel: 'Nessuna iscrizione'
+  subscriptionsURLInput: 'URL Canale'
+  subscriptionsInfo: |
+    Iscrive a un canale definito. Verrà scaricato solo l'ultimo video.
+    Il lavoro di monitoraggio sarà programmato/attivato da un'espressione cron definita (se lasciata vuota, l'impostazione predefinita è ogni 5 minuti).
+  cronExpressionLabel: 'Espressione Cron'
+  editButtonLabel: 'Modifica'
+  newSubscriptionButton: Nuova iscrizione
