@@ -73,3 +73,12 @@ keys:
   noFilesFound: 'No Files Found'
   tableView: 'Table View'
   deleteSelected: 'Delete selected'
+  subscriptionsButtonLabel: 'Subscriptions'
+  subscriptionsEmptyLabel: 'No subscriptions'
+  subscriptionsURLInput: 'Channel URL'
+  subscriptionsInfo: |
+    Subscribes to a defined channel. Only the last video will be downloaded.
+    The monitor job will be scheduled/triggered by a defined cron expression (defaults to every 5 minutes if left blank).
+  cronExpressionLabel: 'Cron expression'
+  editButtonLabel: 'Edit'
+  newSubscriptionButton: New subscription
