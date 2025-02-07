@@ -12,7 +12,6 @@ on:
 jobs:
   build-linux-binaries:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
     strategy:
       matrix:
         # List of GOOS and GOARCH pairs from `go tool dist list`
