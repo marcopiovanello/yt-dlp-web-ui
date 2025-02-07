@@ -1,0 +1,66 @@
+name: Binaries Tag Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+-[0-9]+'
+
+jobs:
+  build-linux-binaries:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    strategy:
+      matrix:
+        # List of GOOS and GOARCH pairs from `go tool dist list`
+        goosarch:
+          - 'linux/amd64'
+          - 'linux/arm'
+          - 'linux/arm64'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Build frontend dependencies
+        working-directory: ./frontend
+        run: |
+          pnpm install
+          pnpm build
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+      - name: Get OS and arch info
+        run: |
+          GOOSARCH=${{matrix.goosarch}}
+          GOOS=${GOOSARCH%/*}
+          GOARCH=${GOOSARCH#*/}
+          BINARY_NAME=yt-dlp-webui_$GOOS-$GOARCH
+          echo "BINARY_NAME=$BINARY_NAME" >> $GITHUB_ENV
+          echo "GOOS=$GOOS" >> $GITHUB_ENV
+          echo "GOARCH=$GOARCH" >> $GITHUB_ENV
+          echo "CGO_ENABLED=0" >> $GITHUB_ENV
+      - name: Build Go Binary
+        run: go build -o "$BINARY_NAME" -v
+      - name: Release binaries
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ".github/RELEASE-TEMPLATE.md"
+          draft: false
+          prerelease: false
+          files: ${{env.BINARY_NAME}}
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
