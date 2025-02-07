@@ -76,7 +76,7 @@ func (m *Monitor) Status() LiveStreamStatus {
 // Persist the monitor current state to a file.
 // The file is located in the configured config directory
 func (m *Monitor) Persist() error {
-	fd, err := os.Create(filepath.Join(config.Instance().Dir(), "livestreams.dat"))
+	fd, err := os.Create(filepath.Join(config.Instance().SessionFilePath, "livestreams.dat"))
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func (m *Monitor) Persist() error {
 
 // Restore a saved state and resume the monitored livestreams
 func (m *Monitor) Restore() error {
-	fd, err := os.Open(filepath.Join(config.Instance().Dir(), "livestreams.dat"))
+	fd, err := os.Open(filepath.Join(config.Instance().SessionFilePath, "livestreams.dat"))
 	if err != nil {
 		return err
 	}
