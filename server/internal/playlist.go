@@ -9,20 +9,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/common"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/playlist"
 )
 
-type metadata struct {
-	Entries       []DownloadInfo `json:"entries"`
-	Count         int            `json:"playlist_count"`
-	PlaylistTitle string         `json:"title"`
-	Type          string         `json:"_type"`
-}
-
 func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
+	params := append(req.Params, "--flat-playlist", "-J")
+	urlWithParams := append([]string{req.URL}, params...)
+
 	var (
 		downloader = config.Instance().DownloaderPath
-		cmd        = exec.Command(downloader, req.URL, "--flat-playlist", "-J")
+		cmd        = exec.Command(downloader, urlWithParams...)
 	)
 
 	stdout, err := cmd.StdoutPipe()
@@ -30,7 +28,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 		return err
 	}
 
-	var m metadata
+	var m playlist.Metadata
 
 	if err := cmd.Start(); err != nil {
 		return err
@@ -53,11 +51,19 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 	}
 
 	if m.Type == "playlist" {
-		entries := slices.CompactFunc(slices.Compact(m.Entries), func(a DownloadInfo, b DownloadInfo) bool {
+		entries := slices.CompactFunc(slices.Compact(m.Entries), func(a common.DownloadInfo, b common.DownloadInfo) bool {
 			return a.URL == b.URL
 		})
 
+		entries = slices.DeleteFunc(entries, func(e common.DownloadInfo) bool {
+			return strings.Contains(e.URL, "list=")
+		})
+
 		slog.Info("playlist detected", slog.String("url", req.URL), slog.Int("count", len(entries)))
+
+		if err := playlist.ApplyModifiers(&entries, req.Params); err != nil {
+			return err
+		}
 
 		for i, meta := range entries {
 			// detect playlist title from metadata since each playlist entry will be
@@ -82,11 +88,13 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 
 			proc.Info.URL = meta.URL
 
-			time.Sleep(time.Millisecond)
-
 			db.Set(proc)
 			mq.Publish(proc)
+
+			proc.Info.CreatedAt = meta.CreatedAt
 		}
+
+		return nil
 	}
 
 	proc := &Process{

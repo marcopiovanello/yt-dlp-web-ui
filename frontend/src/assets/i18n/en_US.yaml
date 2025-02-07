@@ -31,7 +31,7 @@ keys:
   splashText: No active downloads
   archiveTitle: Archive
   clipboardAction: Copied URL to clipboard
-  playlistCheckbox: Download playlist (it will take time, after submitting you may close this window)
+  playlistCheckbox: Download playlist
   restartAppMessage: Needs a page reload to take effect
   servedFromReverseProxyCheckbox: Is behind a reverse proxy
   urlBase: URL base, for reverse proxy support (subdir), defaults to empty

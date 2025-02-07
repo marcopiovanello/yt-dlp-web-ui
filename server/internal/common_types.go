@@ -1,6 +1,8 @@
 package internal
 
-import "time"
+import (
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/common"
+)
 
 // Used to unmarshall yt-dlp progress
 type ProgressTemplate struct {
@@ -29,29 +31,14 @@ type DownloadProgress struct {
 	ETA        float64 `json:"eta"`
 }
 
-// Used to deser the yt-dlp -J output
-type DownloadInfo struct {
-	URL         string    `json:"url"`
-	Title       string    `json:"title"`
-	Thumbnail   string    `json:"thumbnail"`
-	Resolution  string    `json:"resolution"`
-	Size        int32     `json:"filesize_approx"`
-	VCodec      string    `json:"vcodec"`
-	ACodec      string    `json:"acodec"`
-	Extension   string    `json:"ext"`
-	OriginalURL string    `json:"original_url"`
-	FileName    string    `json:"filename"`
-	CreatedAt   time.Time `json:"created_at"`
-}
-
 // struct representing the response sent to the client
 // as JSON-RPC result field
 type ProcessResponse struct {
-	Id       string           `json:"id"`
-	Progress DownloadProgress `json:"progress"`
-	Info     DownloadInfo     `json:"info"`
-	Output   DownloadOutput   `json:"output"`
-	Params   []string         `json:"params"`
+	Id       string              `json:"id"`
+	Progress DownloadProgress    `json:"progress"`
+	Info     common.DownloadInfo `json:"info"`
+	Output   DownloadOutput      `json:"output"`
+	Params   []string            `json:"params"`
 }
 
 // struct representing the current status of the memoryDB
