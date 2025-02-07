@@ -121,11 +121,14 @@ export const appTitleState = atomWithStorage(
 export const serverAddressAndPortState = atom((get) => {
   if (get(servedFromReverseProxySubDirState)) {
     return `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
+      .replaceAll('"', '') // TODO: atomWithStorage put extra double quotes on strings
   }
   if (get(servedFromReverseProxyState)) {
     return `${get(serverAddressState)}`
+      .replaceAll('"', '')
   }
   return `${get(serverAddressState)}:${get(serverPortState)}`
+    .replaceAll('"', '')
 })
 
 export const serverURL = atom((get) =>
@@ -135,14 +138,12 @@ export const serverURL = atom((get) =>
 export const rpcWebSocketEndpoint = atom((get) => {
   const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
   return `${proto}//${get(serverAddressAndPortState)}/rpc/ws`
-}
-)
+})
 
 export const rpcHTTPEndpoint = atom((get) => {
   const proto = window.location.protocol
   return `${proto}//${get(serverAddressAndPortState)}/rpc/http`
-}
-)
+})
 
 export const serverSideCookiesState = atom<Promise<string>>(async (get) => await pipe(
   ffetch<Readonly<{ cookies: string }>>(`${get(serverURL)}/api/v1/cookies`),
@@ -180,5 +181,4 @@ export const settingsState = atom<SettingsState>((get) => ({
   listView: get(listViewState),
   servedFromReverseProxy: get(servedFromReverseProxyState),
   appTitle: get(appTitleState)
-})
-)
+}))

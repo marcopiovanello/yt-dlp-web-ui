@@ -53,6 +53,7 @@ func toDB(dto *domain.Subscription) data.Subscription {
 
 // Delete implements domain.Service.
 func (s *Service) Delete(ctx context.Context, id string) error {
+	s.runner.StopTask(id)
 	return s.r.Delete(ctx, id)
 }
 
