@@ -21,8 +21,6 @@ jobs:
           - 'linux/arm64'
           - 'darwin/amd64'
           - 'darwin/arm64'
-          - 'windows/386'
-          - 'windows/amd64'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
