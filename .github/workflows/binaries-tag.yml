@@ -19,13 +19,17 @@ jobs:
           - 'linux/amd64'
           - 'linux/arm'
           - 'linux/arm64'
+          - 'darwin/amd64'
+          - 'darwin/arm64'
+          - 'windows/386'
+          - 'windows/amd64'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: latest
           run_install: false
           standalone: true
       - name: Build frontend dependencies
@@ -33,7 +37,7 @@ jobs:
         run: |
           pnpm install
           pnpm build
-      - name: Setup Go
+      - name: Install latest Go
         uses: actions/setup-go@v5
         with:
           go-version: 'stable'
@@ -47,9 +51,9 @@ jobs:
           echo "GOOS=$GOOS" >> $GITHUB_ENV
           echo "GOARCH=$GOARCH" >> $GITHUB_ENV
           echo "CGO_ENABLED=0" >> $GITHUB_ENV
-      - name: Build Go Binary
+      - name: Build ${{matrix.goosarch}} Binary
         run: go build -o "$BINARY_NAME" -v
-      - name: Release binaries
+      - name: Publish ${{matrix.goosarch}} binary
         uses: softprops/action-gh-release@v2
         with:
           draft: false
