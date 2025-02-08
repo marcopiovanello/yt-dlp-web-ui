@@ -55,7 +55,6 @@ jobs:
       - name: Release binaries
         uses: softprops/action-gh-release@v2
         with:
-          body_path: ".github/RELEASE-TEMPLATE.md"
           draft: false
           prerelease: false
           files: ${{env.BINARY_NAME}}
