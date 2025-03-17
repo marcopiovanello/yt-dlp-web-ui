@@ -6,10 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/google/uuid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"golang.org/x/oauth2"
 )
 
@@ -74,6 +76,21 @@ func doAuthentification(r *http.Request, setCookieCallback func(t *oauth2.Token)
 	idToken, err := verifier.Verify(r.Context(), rawToken)
 	if err != nil {
 		return nil, err
+	}
+
+	var claims struct {
+		Email    string `json:"email"`
+		Verified bool   `json:"email_verified"`
+	}
+
+	if err := idToken.Claims(&claims); err != nil {
+		return nil, err
+	}
+
+	whitelist := config.Instance().OpenIdEmailWhitelist
+
+	if len(whitelist) > 0 && !slices.Contains(whitelist, claims.Email) {
+		return nil, errors.New("email address not found in ACL")
 	}
 
 	nonce, err := r.Cookie("nonce")

@@ -9,27 +9,28 @@ import (
 )
 
 type Config struct {
-	LogPath            string `yaml:"log_path"`
-	EnableFileLogging  bool   `yaml:"enable_file_logging"`
-	BaseURL            string `yaml:"base_url"`
-	Host               string `yaml:"host"`
-	Port               int    `yaml:"port"`
-	DownloadPath       string `yaml:"downloadPath"`
-	DownloaderPath     string `yaml:"downloaderPath"`
-	RequireAuth        bool   `yaml:"require_auth"`
-	Username           string `yaml:"username"`
-	Password           string `yaml:"password"`
-	QueueSize          int    `yaml:"queue_size"`
-	LocalDatabasePath  string `yaml:"local_database_path"`
-	SessionFilePath    string `yaml:"session_file_path"`
-	path               string // private
-	UseOpenId          bool   `yaml:"use_openid"`
-	OpenIdProviderURL  string `yaml:"openid_provider_url"`
-	OpenIdClientId     string `yaml:"openid_client_id"`
-	OpenIdClientSecret string `yaml:"openid_client_secret"`
-	OpenIdRedirectURL  string `yaml:"openid_redirect_url"`
-	FrontendPath       string `yaml:"frontend_path"`
-	AutoArchive        bool   `yaml:"auto_archive"`
+	LogPath              string   `yaml:"log_path"`
+	EnableFileLogging    bool     `yaml:"enable_file_logging"`
+	BaseURL              string   `yaml:"base_url"`
+	Host                 string   `yaml:"host"`
+	Port                 int      `yaml:"port"`
+	DownloadPath         string   `yaml:"downloadPath"`
+	DownloaderPath       string   `yaml:"downloaderPath"`
+	RequireAuth          bool     `yaml:"require_auth"`
+	Username             string   `yaml:"username"`
+	Password             string   `yaml:"password"`
+	QueueSize            int      `yaml:"queue_size"`
+	LocalDatabasePath    string   `yaml:"local_database_path"`
+	SessionFilePath      string   `yaml:"session_file_path"`
+	path                 string   // private
+	UseOpenId            bool     `yaml:"use_openid"`
+	OpenIdProviderURL    string   `yaml:"openid_provider_url"`
+	OpenIdClientId       string   `yaml:"openid_client_id"`
+	OpenIdClientSecret   string   `yaml:"openid_client_secret"`
+	OpenIdRedirectURL    string   `yaml:"openid_redirect_url"`
+	OpenIdEmailWhitelist []string `yaml:"openid_email_whitelist"`
+	FrontendPath         string   `yaml:"frontend_path"`
+	AutoArchive          bool     `yaml:"auto_archive"`
 }
 
 var (
