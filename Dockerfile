@@ -25,14 +25,11 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 # -----------------------------------------------------------------------------
 
 # Runtime ---------------------------------------------------------------------
-FROM alpine
+FROM python:3.13.2-alpine3.21
 
 RUN apk update && \
 apk add ffmpeg ca-certificates curl wget gnutls && \
-RELEASE=$(curl --silent "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/') && \
-if [ $(apk --print-arch) == "aarch64" ]; then curl -L -o yt-dlp "https://github.com/yt-dlp/yt-dlp/releases/download/$RELEASE/yt-dlp_linux_aarch64"; else curl -L -o yt-dlp "https://github.com/yt-dlp/yt-dlp/releases/download/$RELEASE/yt-dlp_linux"; fi; && \
-chmod +x ./yt-dlp && \
-mv ./yt-dlp /usr/bin/yt-dlp
+pip install "yt-dlp[default,curl-cffi,mutagen,pycryptodomex,phantomjs,secretstorage]"
 
 VOLUME /downloads /config
 
