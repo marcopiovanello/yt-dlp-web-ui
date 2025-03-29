@@ -119,21 +119,28 @@ export const appTitleState = atomWithStorage(
 )
 
 export const serverAddressAndPortState = atom((get) => {
+  let retval = ''
+
   if (get(servedFromReverseProxySubDirState)) {
-    return `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
+    retval = `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
       .replaceAll('"', '') // TODO: atomWithStorage put extra double quotes on strings
   }
   if (get(servedFromReverseProxyState)) {
-    return `${get(serverAddressState)}`
+    retval = `${get(serverAddressState)}`
       .replaceAll('"', '')
   }
-  return `${get(serverAddressState)}:${get(serverPortState)}`
+  retval = `${get(serverAddressState)}:${get(serverPortState)}`
     .replaceAll('"', '')
+
+  return retval.endsWith('/') ? retval.slice(0, -1) : retval
 })
 
-export const serverURL = atom((get) =>
-  `${window.location.protocol}//${get(serverAddressAndPortState)}`
-)
+export const serverURL = atom((get) => {
+  const _serverURL = `${window.location.protocol}//${get(serverAddressAndPortState)}`
+  return _serverURL.endsWith('/')
+    ? _serverURL.slice(0, -1)
+    : _serverURL
+})
 
 export const rpcWebSocketEndpoint = atom((get) => {
   const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
