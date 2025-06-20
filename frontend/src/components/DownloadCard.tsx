@@ -63,7 +63,6 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
 
   const handleShare = () => {
     const encoded = base64URLEncode(download.output.savedFilePath)
-    //const link = `${serverAddr}/public/${encoded}`
     const link = `${window.location.origin}/#/public/${encoded}`
     setShareLink(link)
     setShareOpen(true)
@@ -161,7 +160,7 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
                   <OpenInBrowserIcon />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Share this file">  {/* ← Das hier neu */}
+              <Tooltip title="Share this file"> 
                 <IconButton onClick={handleShare}>
                   <ShareIcon />
                 </IconButton>
