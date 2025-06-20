@@ -210,7 +210,7 @@ export default function Downloaded() {
         onShare={() => {
           if (currentFile) {
             const encoded = base64URLEncode(currentFile.path)
-            const link = `${serverAddr}/public/${encoded}`
+            const link = `${window.location.origin}/#/public/${encoded}`
             setShareLink(link)
             setShareOpen(true)
             setShowMenu(false)

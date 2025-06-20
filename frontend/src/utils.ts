@@ -83,6 +83,16 @@ export const base64URLEncode = (s: string) => pipe(
   encodeURIComponent
 )
 
+export const base64URLDecode = (encoded: string): string => {
+  try {
+    const decoded = decodeURIComponent(encoded)
+    const bytes = Uint8Array.from(atob(decoded), c => c.charCodeAt(0))
+    return new TextDecoder().decode(bytes)
+  } catch {
+    return ''
+  }
+}
+
 export const getAccentValue = (accent: Accent, mode: ThemeNarrowed) => {
   switch (accent) {
     case 'default':
