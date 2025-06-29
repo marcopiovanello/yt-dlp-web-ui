@@ -40,7 +40,7 @@ Feel free to join :)
 
 ## Settings
 
-The currently avaible settings are:
+The currently available settings are:
 -   Server address
 -   Switch theme
 -   Extract audio
