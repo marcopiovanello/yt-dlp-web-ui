@@ -177,7 +177,7 @@ Usage yt-dlp-webui:
 ### Config file
 By running `yt-dlp-webui` in standalone mode you have the ability to also specify a config file.
 The config file **will overwrite what have been passed as cli argument**.
-With Docker, inside the mounted `/conf` volume inside there must be a file named `config.yml`.
+With Docker, inside the mounted `/config` volume inside there must be a file named `config.yml`.
 
 ```yaml
 # Simple configuration file for yt-dlp webui
