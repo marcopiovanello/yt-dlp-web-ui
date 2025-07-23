@@ -93,6 +93,7 @@ func (p *Process) Start() {
 
 	baseParams := []string{
 		strings.Split(p.Url, "?list")[0], //no playlist
+		"--no-exec",
 		"--newline",
 		"--no-colors",
 		"--no-playlist",
