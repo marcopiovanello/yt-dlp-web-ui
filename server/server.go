@@ -201,6 +201,12 @@ func newServer(c serverConfig) *http.Server {
 		r.Get("/bulk", filebrowser.BulkDownload(c.mdb))
 	})
 
+
+	// Filebrowser routes
+	r.Route("/public", func(r chi.Router) {
+		r.Get("/{id}", filebrowser.SendFile)
+	})
+
 	// Archive routes
 	r.Route("/archive", archive.ApplyRouter(c.db))
 
