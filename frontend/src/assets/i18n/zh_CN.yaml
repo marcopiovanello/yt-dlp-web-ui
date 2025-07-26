@@ -42,7 +42,7 @@ keys:
   themeTogglerLabel: 主题切换
   loadingLabel: 正在加载…
   appTitle: App 标题
-  savedTemplates: 保存模板
+  savedTemplates: 选择模板
   templatesEditor: 模板编辑器
   templatesEditorNameLabel: 模板名称
   templatesEditorContentLabel: 模板内容
