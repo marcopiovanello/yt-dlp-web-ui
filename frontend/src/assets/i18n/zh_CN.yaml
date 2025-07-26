@@ -33,10 +33,10 @@ keys:
   clipboardAction: 复制 URL 到剪贴板
   playlistCheckbox: 下载播放列表（可能需要一段时间，提交后可以关闭页面等待）
   restartAppMessage: 需要刷新页面才能生效
-  servedFromReverseProxyCheckbox: 处于反向代理的子目录后
+  servedFromReverseProxyCheckbox: 位于反向代理后面
   newDownloadButton: 新下载
   homeButtonLabel: 主页
-  archiveButtonLabel: 归档
+  archiveButtonLabel: 直播
   settingsButtonLabel: 设置
   rpcAuthenticationLabel: RPC 身份验证
   themeTogglerLabel: 主题切换
@@ -49,34 +49,34 @@ keys:
   logsTitle: '日志'
   awaitingLogs: '正在等待日志…'
   bulkDownload: '下载 zip 压缩包中的文件'
-  templatesReloadInfo: To register a new template it might need a page reload.
+  templatesReloadInfo: 要使用新模板，需要重新加载网页
   livestreamURLInput: 直播 URL
   livestreamStatusWaiting: 等待直播开始
   livestreamStatusDownloading: 下载中
   livestreamStatusCompleted: 已完成
   livestreamStatusErrored: 发生错误
   livestreamStatusUnknown: 未知
-  livestreamNoMonitoring: No livestreams monitored
+  livestreamNoMonitoring: 没有监控的直播
   livestreamDownloadInfo: |
-    本功能将会监控即将开始的直播流，每个进程都会传入参数：--wait-for-video 10 （重试间隔10秒）
+    本功能将会监控即将开始的直播流，每个进程都会传入参数：--wait-for-video 10 （重试间隔10秒）。
     如果直播已经开始，那么依然可以下载，但是不会记录下载进度。
     直播开始后，将会转移到下载页面
   livestreamExperimentalWarning: 实验性功能，可能存在未知Bug，请谨慎使用
-  accentSelect: 'Accent'
-  urlBase: URL base, for reverse proxy support (subdir), defaults to empty
-  rpcPollingTimeTitle: RPC polling time
-  rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
-  generalDownloadSettings: 'General Download Settings'
-  deleteCookies: Delete Cookies
-  noFilesFound: 'No Files Found'
-  tableView: 'Table View'
-  deleteSelected: 'Delete selected'
-  subscriptionsButtonLabel: 'Subscriptions'
-  subscriptionsEmptyLabel: 'No subscriptions'
-  subscriptionsURLInput: 'Channel URL'
+  accentSelect: '配色'
+  urlBase: URL 地址，用于反向代理支持（subdir），默认为空
+  rpcPollingTimeTitle: RPC轮询时间
+  rpcPollingTimeDescription: 间隔越短，CPU 使用率越高（服务器端和客户端）
+  generalDownloadSettings: '常规下载设置'
+  deleteCookies: 删除 Cookies
+  noFilesFound: '没有文件'
+  tableView: '表格视图'
+  deleteSelected: '删除所选'
+  subscriptionsButtonLabel: '订阅'
+  subscriptionsEmptyLabel: '没有订阅'
+  subscriptionsURLInput: '频道 URL'
   subscriptionsInfo: |
-    Subscribes to a defined channel. Only the last video will be downloaded.
-    The monitor job will be scheduled/triggered by a defined cron expression (defaults to every 5 minutes if left blank).
-  cronExpressionLabel: 'Cron expression'
-  editButtonLabel: 'Edit'
-  newSubscriptionButton: New subscription
+    订阅自定义的频道，只会下载最后一个视频。
+    监视作业将由自定义的Cron表达式调度/触发（如果留空，则默认为每 5 分钟一次）。
+  cronExpressionLabel: 'Cron 表达式'
+  editButtonLabel: '编辑'
+  newSubscriptionButton: 新订阅
