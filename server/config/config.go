@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
 
 	"gopkg.in/yaml.v3"
 )
@@ -31,6 +32,11 @@ type Config struct {
 	OpenIdEmailWhitelist []string `yaml:"openid_email_whitelist"`
 	FrontendPath         string   `yaml:"frontend_path"`
 	AutoArchive          bool     `yaml:"auto_archive"`
+	Twitch               struct {
+		ClientId      string        `yaml:"client_id"`
+		ClientSecret  string        `yaml:"client_secret"`
+		CheckInterval time.Duration `yaml:"check_interval"`
+	} `yaml:"twitch"`
 }
 
 var (

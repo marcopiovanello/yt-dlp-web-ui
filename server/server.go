@@ -34,6 +34,7 @@ import (
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/task"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/twitch"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/user"
 
 	_ "modernc.org/sqlite"
@@ -51,6 +52,7 @@ type serverConfig struct {
 	db       *sql.DB
 	mq       *internal.MessageQueue
 	lm       *livestream.Monitor
+	tm       *twitch.Monitor
 }
 
 // TODO: change scope
@@ -115,17 +117,33 @@ func RunBlocking(rc *RunConfig) {
 	go lm.Schedule()
 	go lm.Restore()
 
-	srv := newServer(serverConfig{
+	tm := twitch.NewMonitor(
+		twitch.NewAuthenticationManager(
+			config.Instance().Twitch.ClientId,
+			config.Instance().Twitch.ClientSecret,
+		),
+	)
+	go tm.Monitor(
+		context.TODO(),
+		config.Instance().Twitch.CheckInterval,
+		twitch.DEFAULT_DOWNLOAD_HANDLER(mdb, mq),
+	)
+	go tm.Restore()
+
+	scfg := serverConfig{
 		frontend: rc.App,
 		swagger:  rc.Swagger,
 		mdb:      mdb,
 		mq:       mq,
 		db:       db,
 		lm:       lm,
-	})
+		tm:       tm,
+	}
 
-	go gracefulShutdown(srv, mdb)
-	go autoPersist(time.Minute*5, mdb, lm)
+	srv := newServer(scfg)
+
+	go gracefulShutdown(srv, &scfg)
+	go autoPersist(time.Minute*5, mdb, lm, tm)
 
 	var (
 		network = "tcp"
@@ -188,12 +206,7 @@ func newServer(c serverConfig) *http.Server {
 
 	// Filebrowser routes
 	r.Route("/filebrowser", func(r chi.Router) {
-		if config.Instance().RequireAuth {
-			r.Use(middlewares.Authenticated)
-		}
-		if config.Instance().UseOpenId {
-			r.Use(openid.Middleware)
-		}
+		r.Use(middlewares.ApplyAuthenticationByConfig)
 		r.Post("/downloaded", filebrowser.ListDownloaded)
 		r.Post("/delete", filebrowser.DeleteFile)
 		r.Get("/d/{id}", filebrowser.DownloadFile)
@@ -235,10 +248,17 @@ func newServer(c serverConfig) *http.Server {
 	// Subscriptions
 	r.Route("/subscriptions", subscription.Container(c.db, cronTaskRunner).ApplyRouter())
 
+	// Twitch
+	r.Route("/twitch", func(r chi.Router) {
+		r.Use(middlewares.ApplyAuthenticationByConfig)
+		r.Get("/all", twitch.GetMonitoredUsers(c.tm))
+		r.Post("/add", twitch.MonitorUserHandler(c.tm))
+	})
+
 	return &http.Server{Handler: r}
 }
 
-func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
+func gracefulShutdown(srv *http.Server, cfg *serverConfig) {
 	ctx, stop := signal.NotifyContext(context.Background(),
 		os.Interrupt,
 		syscall.SIGTERM,
@@ -250,7 +270,9 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 		slog.Info("shutdown signal received")
 
 		defer func() {
-			db.Persist()
+			cfg.mdb.Persist()
+			cfg.lm.Persist()
+			cfg.tm.Persist()
 
 			stop()
 			srv.Shutdown(context.Background())
@@ -258,8 +280,14 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 	}()
 }
 
-func autoPersist(d time.Duration, db *internal.MemoryDB, lm *livestream.Monitor) {
+func autoPersist(
+	d time.Duration,
+	db *internal.MemoryDB,
+	lm *livestream.Monitor,
+	tm *twitch.Monitor,
+) {
 	for {
+		time.Sleep(d)
 		if err := db.Persist(); err != nil {
 			slog.Warn("failed to persisted session", slog.Any("err", err))
 		}
@@ -267,7 +295,10 @@ func autoPersist(d time.Duration, db *internal.MemoryDB, lm *livestream.Monitor)
 			slog.Warn(
 				"failed to persisted livestreams monitor session", slog.Any("err", err.Error()))
 		}
+		if err := tm.Persist(); err != nil {
+			slog.Warn(
+				"failed to persisted twitch monitor session", slog.Any("err", err.Error()))
+		}
 		slog.Debug("sucessfully persisted session")
-		time.Sleep(d)
 	}
 }
