@@ -70,6 +70,11 @@ func (c *Client) PollStream(channel string, liveChannel chan<- *StreamInfo) erro
 		return err
 	}
 
+	if len(sr.Data) == 0 {
+		liveChannel <- &StreamInfo{UserName: channel, IsLive: false}
+		return nil
+	}
+
 	s := sr.Data[0]
 	started, _ := time.Parse(time.RFC3339, s.StartedAt)
 

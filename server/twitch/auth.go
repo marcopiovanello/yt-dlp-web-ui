@@ -36,7 +36,7 @@ func NewAuthenticationManager(clientId, clientSecret string) *AuthenticationMana
 }
 
 func (a *AuthenticationManager) GetAccessToken() (*AccessToken, error) {
-	if a.accesToken != nil && a.accesToken.Expiry.After(time.Now()) {
+	if a.accesToken != nil && a.accesToken.Token != "" && a.accesToken.Expiry.After(time.Now()) {
 		return a.accesToken, nil
 	}
 

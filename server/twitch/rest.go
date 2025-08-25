@@ -3,6 +3,7 @@ package twitch
 import (
 	"encoding/json"
 	"net/http"
+	"slices"
 )
 
 type addUserReq struct {
@@ -21,6 +22,17 @@ func MonitorUserHandler(m *Monitor) http.HandlerFunc {
 		m.Add(req.User)
 
 		if err := json.NewEncoder(w).Encode("ok"); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func GetMonitoredUsers(m *Monitor) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		it := m.GetMonitoredUsers()
+
+		if err := json.NewEncoder(w).Encode(slices.Collect(it)); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

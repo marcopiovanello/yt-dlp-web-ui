@@ -123,10 +123,14 @@ func RunBlocking(rc *RunConfig) {
 			config.Instance().Twitch.ClientSecret,
 		),
 	)
-	go tm.Monitor(context.TODO(), time.Minute*1, twitch.DEFAULT_DOWNLOAD_HANDLER(mdb, mq))
+	go tm.Monitor(
+		context.TODO(),
+		config.Instance().Twitch.CheckInterval,
+		twitch.DEFAULT_DOWNLOAD_HANDLER(mdb, mq),
+	)
 	go tm.Restore()
 
-	srv := newServer(serverConfig{
+	scfg := serverConfig{
 		frontend: rc.App,
 		swagger:  rc.Swagger,
 		mdb:      mdb,
@@ -134,9 +138,11 @@ func RunBlocking(rc *RunConfig) {
 		db:       db,
 		lm:       lm,
 		tm:       tm,
-	})
+	}
 
-	go gracefulShutdown(srv, mdb)
+	srv := newServer(scfg)
+
+	go gracefulShutdown(srv, &scfg)
 	go autoPersist(time.Minute*5, mdb, lm, tm)
 
 	var (
@@ -200,12 +206,7 @@ func newServer(c serverConfig) *http.Server {
 
 	// Filebrowser routes
 	r.Route("/filebrowser", func(r chi.Router) {
-		if config.Instance().RequireAuth {
-			r.Use(middlewares.Authenticated)
-		}
-		if config.Instance().UseOpenId {
-			r.Use(openid.Middleware)
-		}
+		r.Use(middlewares.ApplyAuthenticationByConfig)
 		r.Post("/downloaded", filebrowser.ListDownloaded)
 		r.Post("/delete", filebrowser.DeleteFile)
 		r.Get("/d/{id}", filebrowser.DownloadFile)
@@ -249,13 +250,15 @@ func newServer(c serverConfig) *http.Server {
 
 	// Twitch
 	r.Route("/twitch", func(r chi.Router) {
+		r.Use(middlewares.ApplyAuthenticationByConfig)
+		r.Get("/all", twitch.GetMonitoredUsers(c.tm))
 		r.Post("/add", twitch.MonitorUserHandler(c.tm))
 	})
 
 	return &http.Server{Handler: r}
 }
 
-func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
+func gracefulShutdown(srv *http.Server, cfg *serverConfig) {
 	ctx, stop := signal.NotifyContext(context.Background(),
 		os.Interrupt,
 		syscall.SIGTERM,
@@ -267,7 +270,9 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 		slog.Info("shutdown signal received")
 
 		defer func() {
-			db.Persist()
+			cfg.mdb.Persist()
+			cfg.lm.Persist()
+			cfg.tm.Persist()
 
 			stop()
 			srv.Shutdown(context.Background())
@@ -282,6 +287,7 @@ func autoPersist(
 	tm *twitch.Monitor,
 ) {
 	for {
+		time.Sleep(d)
 		if err := db.Persist(); err != nil {
 			slog.Warn("failed to persisted session", slog.Any("err", err))
 		}
@@ -294,6 +300,5 @@ func autoPersist(
 				"failed to persisted twitch monitor session", slog.Any("err", err.Error()))
 		}
 		slog.Debug("sucessfully persisted session")
-		time.Sleep(d)
 	}
 }
