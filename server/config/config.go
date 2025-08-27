@@ -48,6 +48,7 @@ func Instance() *Config {
 	if instance == nil {
 		instanceOnce.Do(func() {
 			instance = &Config{}
+			instance.Twitch.CheckInterval = time.Minute * 5
 		})
 	}
 	return instance
