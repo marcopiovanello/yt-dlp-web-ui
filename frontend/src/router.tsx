@@ -6,6 +6,7 @@ import Terminal from './views/Terminal'
 
 const Home = lazy(() => import('./views/Home'))
 const Login = lazy(() => import('./views/Login'))
+const Twitch = lazy(() => import('./views/Twitch'))
 const Archive = lazy(() => import('./views/Archive'))
 const Settings = lazy(() => import('./views/Settings'))
 const LiveStream = lazy(() => import('./views/Livestream'))
@@ -108,6 +109,14 @@ export const router = createHashRouter([
         element: (
           <Suspense fallback={<CircularProgress />}>
             <LiveStream />
+          </Suspense >
+        )
+      },
+      {
+        path: '/twitch',
+        element: (
+          <Suspense fallback={<CircularProgress />}>
+            <Twitch />
           </Suspense >
         )
       },

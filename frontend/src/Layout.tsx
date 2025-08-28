@@ -28,6 +28,7 @@ import Footer from './components/Footer'
 import Logout from './components/Logout'
 import SocketSubscriber from './components/SocketSubscriber'
 import ThemeToggler from './components/ThemeToggler'
+import TwitchIcon from './components/TwitchIcon'
 import { useI18n } from './hooks/useI18n'
 import Toaster from './providers/ToasterProvider'
 import { getAccentValue } from './utils'
@@ -152,6 +153,19 @@ export default function Layout() {
                   <UpdateIcon />
                 </ListItemIcon>
                 <ListItemText primary={i18n.t('subscriptionsButtonLabel')} />
+              </ListItemButton>
+            </Link>
+            <Link to={'/twitch'} style={
+              {
+                textDecoration: 'none',
+                color: mode === 'dark' ? '#ffffff' : '#000000DE'
+              }
+            }>
+              <ListItemButton>
+                <ListItemIcon>
+                  <TwitchIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Twitch"} />
               </ListItemButton>
             </Link>
             <Link to={'/monitor'} style={

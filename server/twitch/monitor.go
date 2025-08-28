@@ -83,6 +83,13 @@ func (m *Monitor) GetMonitoredUsers() iter.Seq[string] {
 	return maps.Keys(m.monitored)
 }
 
+func (m *Monitor) DeleteUser(user string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	delete(m.monitored, user)
+	delete(m.lastState, user)
+}
+
 func DEFAULT_DOWNLOAD_HANDLER(db *internal.MemoryDB, mq *internal.MessageQueue) func(url string) error {
 	return func(url string) error {
 		p := &internal.Process{

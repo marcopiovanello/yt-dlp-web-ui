@@ -251,8 +251,9 @@ func newServer(c serverConfig) *http.Server {
 	// Twitch
 	r.Route("/twitch", func(r chi.Router) {
 		r.Use(middlewares.ApplyAuthenticationByConfig)
-		r.Get("/all", twitch.GetMonitoredUsers(c.tm))
-		r.Post("/add", twitch.MonitorUserHandler(c.tm))
+		r.Get("/users", twitch.GetMonitoredUsers(c.tm))
+		r.Post("/user", twitch.MonitorUserHandler(c.tm))
+		r.Delete("/user/{user}", twitch.DeleteUser(c.tm))
 	})
 
 	return &http.Server{Handler: r}
