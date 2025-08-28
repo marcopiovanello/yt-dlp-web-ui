@@ -104,10 +104,7 @@ const TwitchDialog: React.FC<Props> = ({ open, onClose }) => {
                 <Grid container gap={1.5}>
                   <Grid item xs={12}>
                     <Alert severity="info">
-                      {i18n.t('subscriptionsInfo')}
-                    </Alert>
-                    <Alert severity="warning" sx={{ mt: 1 }}>
-                      {i18n.t('livestreamExperimentalWarning')}
+                      {i18n.t('twitchIntegrationInfo')}
                     </Alert>
                   </Grid>
                   <Grid item xs={12} mt={1}>
