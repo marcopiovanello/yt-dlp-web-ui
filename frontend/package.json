@@ -1,6 +1,6 @@
 {
   "name": "yt-dlp-webui",
-  "version": "3.2.5",
+  "version": "3.2.6",
   "description": "Frontend compontent of yt-dlp-webui",
   "scripts": {
     "dev": "vite --host 0.0.0.0",

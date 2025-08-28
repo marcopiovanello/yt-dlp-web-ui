@@ -164,7 +164,7 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 
 func (s *Service) GetVersion(ctx context.Context) (string, string, error) {
 	//TODO: load from realease properties file, or anything else outside code
-	const CURRENT_RPC_VERSION = "3.2.5"
+	const CURRENT_RPC_VERSION = "3.2.6"
 
 	result := make(chan string, 1)
 
