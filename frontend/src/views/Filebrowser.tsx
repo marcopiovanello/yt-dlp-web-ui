@@ -43,6 +43,10 @@ import { DirectoryEntry } from '../types'
 import { base64URLEncode, formatSize } from '../utils'
 import { useAtomValue } from 'jotai'
 
+import ShareIcon from '@mui/icons-material/Share'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+
+
 export default function Downloaded() {
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 })
   const [showMenu, setShowMenu] = useState(false)
@@ -178,6 +182,9 @@ export default function Downloaded() {
     fetcherSubfolder(path)
   })
 
+  const [shareOpen, setShareOpen] = useState(false)
+  const [shareLink, setShareLink] = useState('')
+
   return (
     <Container
       maxWidth="xl"
@@ -198,6 +205,15 @@ export default function Downloaded() {
           if (currentFile) {
             deleteFile(currentFile)
             setCurrentFile(undefined)
+          }
+        }}
+        onShare={() => {
+          if (currentFile) {
+            const encoded = base64URLEncode(currentFile.path)
+            const link = `${serverAddr}/public/${encoded}`
+            setShareLink(link)
+            setShareOpen(true)
+            setShowMenu(false)
           }
         }}
       />
@@ -316,8 +332,46 @@ export default function Downloaded() {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+      >
+        <DialogTitle>Share this file</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Copy the link below and share it.
+          </DialogContentText>
+          <Paper sx={{ display: 'flex', mt: 2, p: 1 }}>
+            <input
+              style={{
+                flex: 1,
+                border: 'none',
+                background: 'transparent',
+                fontFamily: 'monospace',
+                fontSize: '0.9rem',
+              }}
+              value={shareLink}
+              readOnly
+            />
+            <Button
+              variant="outlined"
+              onClick={() => {
+                navigator.clipboard.writeText(shareLink)
+                pushMessage('Link copied to clipboard', 'success')
+              }}
+            >
+              <ContentCopyIcon fontSize="small" sx={{ mr: 1 }} />
+              Copy
+            </Button>
+          </Paper>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShareOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   )
+
 }
 
 const IconMenu: React.FC<{
@@ -326,7 +380,8 @@ const IconMenu: React.FC<{
   hide: boolean
   onDownload: () => void
   onDelete: () => void
-}> = ({ posX, posY, hide, onDelete, onDownload }) => {
+  onShare: () => void
+}> = ({ posX, posY, hide, onDelete, onDownload, onShare }) => {
   return (
     <Paper sx={{
       width: 320,
@@ -342,17 +397,19 @@ const IconMenu: React.FC<{
           <ListItemIcon>
             <DownloadIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>
-            Download
-          </ListItemText>
+          <ListItemText>Download</ListItemText>
         </MenuItem>
         <MenuItem onClick={onDelete}>
           <ListItemIcon>
             <DeleteForeverIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>
-            Delete
-          </ListItemText>
+          <ListItemText>Delete</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={onShare}>
+          <ListItemIcon>
+            <ShareIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Share</ListItemText>
         </MenuItem>
       </MenuList>
     </Paper>
