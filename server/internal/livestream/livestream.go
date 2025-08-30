@@ -11,7 +11,10 @@ import (
 	"time"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/pipes"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 )
 
 const (
@@ -32,11 +35,11 @@ type LiveStream struct {
 	waitTime     time.Duration
 	liveDate     time.Time
 
-	mq *internal.MessageQueue
-	db *internal.MemoryDB
+	mq *queue.MessageQueue
+	db *kv.Store
 }
 
-func New(url string, done chan *LiveStream, mq *internal.MessageQueue, db *internal.MemoryDB) *LiveStream {
+func New(url string, done chan *LiveStream, mq *queue.MessageQueue, db *kv.Store) *LiveStream {
 	return &LiveStream{
 		url:          url,
 		done:         done,
@@ -87,13 +90,12 @@ func (l *LiveStream) Start() error {
 	l.done <- l
 
 	// Send the started livestream to the message queue! :D
-	p := &internal.Process{
-		Url:        l.url,
-		Livestream: true,
-		Params:     []string{"--downloader", "ffmpeg", "--no-part"},
-	}
-	l.db.Set(p)
-	l.mq.Publish(p)
+
+	//TODO: add pipes
+	d := downloaders.NewLiveStreamDownloader(l.url, []pipes.Pipe{})
+
+	l.db.Set(d)
+	l.mq.Publish(d)
 
 	return nil
 }

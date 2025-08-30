@@ -1,4 +1,4 @@
-package internal
+package kv
 
 import (
 	"encoding/gob"
@@ -6,28 +6,31 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 )
 
-var memDbEvents = make(chan *Process)
+var memDbEvents = make(chan downloaders.Downloader, runtime.NumCPU())
 
 // In-Memory Thread-Safe Key-Value Storage with optional persistence
-type MemoryDB struct {
-	table map[string]*Process
+type Store struct {
+	table map[string]downloaders.Downloader
 	mu    sync.RWMutex
 }
 
-func NewMemoryDB() *MemoryDB {
-	return &MemoryDB{
-		table: make(map[string]*Process),
+func NewStore() *Store {
+	return &Store{
+		table: make(map[string]downloaders.Downloader),
 	}
 }
 
 // Get a process pointer given its id
-func (m *MemoryDB) Get(id string) (*Process, error) {
+func (m *Store) Get(id string) (downloaders.Downloader, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
@@ -40,25 +43,22 @@ func (m *MemoryDB) Get(id string) (*Process, error) {
 }
 
 // Store a pointer of a process and return its id
-func (m *MemoryDB) Set(process *Process) string {
-	id := uuid.NewString()
-
+func (m *Store) Set(d downloaders.Downloader) string {
 	m.mu.Lock()
-	process.Id = id
-	m.table[id] = process
+	m.table[d.GetId()] = d
 	m.mu.Unlock()
 
-	return id
+	return d.GetId()
 }
 
 // Removes a process progress, given the process id
-func (m *MemoryDB) Delete(id string) {
+func (m *Store) Delete(id string) {
 	m.mu.Lock()
 	delete(m.table, id)
 	m.mu.Unlock()
 }
 
-func (m *MemoryDB) Keys() *[]string {
+func (m *Store) Keys() *[]string {
 	var running []string
 
 	m.mu.RLock()
@@ -72,18 +72,12 @@ func (m *MemoryDB) Keys() *[]string {
 }
 
 // Returns a slice of all currently stored processes progess
-func (m *MemoryDB) All() *[]ProcessResponse {
-	running := []ProcessResponse{}
+func (m *Store) All() *[]internal.ProcessSnapshot {
+	running := []internal.ProcessSnapshot{}
 
 	m.mu.RLock()
-	for k, v := range m.table {
-		running = append(running, ProcessResponse{
-			Id:       k,
-			Info:     v.Info,
-			Progress: v.Progress,
-			Output:   v.Output,
-			Params:   v.Params,
-		})
+	for _, v := range m.table {
+		running = append(running, *(v.Status()))
 	}
 	m.mu.RUnlock()
 
@@ -91,7 +85,7 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 }
 
 // Persist the database in a single file named "session.dat"
-func (m *MemoryDB) Persist() error {
+func (m *Store) Persist() error {
 	running := m.All()
 
 	sf := filepath.Join(config.Instance().SessionFilePath, "session.dat")
@@ -113,7 +107,7 @@ func (m *MemoryDB) Persist() error {
 }
 
 // Restore a persisted state
-func (m *MemoryDB) Restore(mq *MessageQueue) {
+func (m *Store) Restore(mq *queue.MessageQueue) {
 	sf := filepath.Join(config.Instance().SessionFilePath, "session.dat")
 
 	fd, err := os.Open(sf)
@@ -130,29 +124,31 @@ func (m *MemoryDB) Restore(mq *MessageQueue) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	for _, proc := range session.Processes {
-		restored := &Process{
-			Id:       proc.Id,
-			Url:      proc.Info.URL,
-			Info:     proc.Info,
-			Progress: proc.Progress,
-			Output:   proc.Output,
-			Params:   proc.Params,
-		}
+	for _, snap := range session.Processes {
+		var restored downloaders.Downloader
 
-		m.table[proc.Id] = restored
+		if snap.DownloaderName == "generic" {
+			d := downloaders.NewGenericDownload("", []string{})
+			err := d.RestoreFromSnapshot(&snap)
+			if err != nil {
+				continue
+			}
+			restored = d
 
-		if restored.Progress.Status != StatusCompleted {
-			mq.Publish(restored)
+			m.table[snap.Id] = restored
+
+			if !restored.(*downloaders.GenericDownloader).DownloaderBase.Completed {
+				mq.Publish(restored)
+			}
 		}
 	}
 }
 
-func (m *MemoryDB) EventListener() {
+func (m *Store) EventListener() {
 	for p := range memDbEvents {
-		if p.AutoRemove {
-			slog.Info("compacting MemoryDB", slog.String("id", p.Id))
-			m.Delete(p.Id)
+		if p.Status().DownloaderName == "livestream" {
+			slog.Info("compacting Store", slog.String("id", p.GetId()))
+			m.Delete(p.GetId())
 		}
 	}
 }

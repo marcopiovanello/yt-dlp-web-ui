@@ -5,11 +5,12 @@ import (
 	"slices"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/domain"
 )
 
 type Repository struct {
-	mdb *internal.MemoryDB
+	mdb *kv.Store
 }
 
 // DownloadSpeed implements domain.Repository.
@@ -29,7 +30,7 @@ func (r *Repository) DownloadSpeed(ctx context.Context) int64 {
 func (r *Repository) Completed(ctx context.Context) int {
 	processes := r.mdb.All()
 
-	completed := slices.DeleteFunc(*processes, func(p internal.ProcessResponse) bool {
+	completed := slices.DeleteFunc(*processes, func(p internal.ProcessSnapshot) bool {
 		return p.Progress.Status != internal.StatusCompleted
 	})
 
@@ -40,7 +41,7 @@ func (r *Repository) Completed(ctx context.Context) int {
 func (r *Repository) Downloading(ctx context.Context) int {
 	processes := r.mdb.All()
 
-	downloading := slices.DeleteFunc(*processes, func(p internal.ProcessResponse) bool {
+	downloading := slices.DeleteFunc(*processes, func(p internal.ProcessSnapshot) bool {
 		return p.Progress.Status != internal.StatusDownloading
 	})
 
@@ -51,14 +52,14 @@ func (r *Repository) Downloading(ctx context.Context) int {
 func (r *Repository) Pending(ctx context.Context) int {
 	processes := r.mdb.All()
 
-	pending := slices.DeleteFunc(*processes, func(p internal.ProcessResponse) bool {
+	pending := slices.DeleteFunc(*processes, func(p internal.ProcessSnapshot) bool {
 		return p.Progress.Status != internal.StatusPending
 	})
 
 	return len(pending)
 }
 
-func New(mdb *internal.MemoryDB) domain.Repository {
+func New(mdb *kv.Store) domain.Repository {
 	return &Repository{
 		mdb: mdb,
 	}

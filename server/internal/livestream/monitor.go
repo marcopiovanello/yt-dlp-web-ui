@@ -8,17 +8,18 @@ import (
 	"path/filepath"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 )
 
 type Monitor struct {
-	db      *internal.MemoryDB     // where the just started livestream will be published
-	mq      *internal.MessageQueue // where the just started livestream will be published
+	db      *kv.Store              // where the just started livestream will be published
+	mq      *queue.MessageQueue    // where the just started livestream will be published
 	streams map[string]*LiveStream // keeps track of the livestreams
 	done    chan *LiveStream       // to signal individual processes completition
 }
 
-func NewMonitor(mq *internal.MessageQueue, db *internal.MemoryDB) *Monitor {
+func NewMonitor(mq *queue.MessageQueue, db *kv.Store) *Monitor {
 	return &Monitor{
 		mq:      mq,
 		db:      db,

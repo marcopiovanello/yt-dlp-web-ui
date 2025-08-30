@@ -12,41 +12,42 @@ import (
 	"github.com/google/uuid"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/playlist"
 )
 
 type Service struct {
-	mdb *internal.MemoryDB
+	mdb *kv.Store
 	db  *sql.DB
-	mq  *internal.MessageQueue
+	mq  *queue.MessageQueue
 	lm  *livestream.Monitor
 }
 
 func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
-	p := &internal.Process{
-		Url:    req.URL,
-		Params: req.Params,
-		Output: internal.DownloadOutput{
-			Path:     req.Path,
-			Filename: req.Rename,
-		},
-	}
+	d := downloaders.NewGenericDownload(req.URL, req.Params)
+	d.SetOutput(internal.DownloadOutput{
+		Path:     req.Path,
+		Filename: req.Rename,
+	})
 
-	id := s.mdb.Set(p)
-	s.mq.Publish(p)
+	id := s.mdb.Set(d)
+	s.mq.Publish(d)
 
 	return id, nil
 }
 
 func (s *Service) ExecPlaylist(req internal.DownloadRequest) error {
-	return internal.PlaylistDetect(req, s.mq, s.mdb)
+	return playlist.PlaylistDetect(req, s.mq, s.mdb)
 }
 
 func (s *Service) ExecLivestream(req internal.DownloadRequest) {
 	s.lm.Add(req.URL)
 }
 
-func (s *Service) Running(ctx context.Context) (*[]internal.ProcessResponse, error) {
+func (s *Service) Running(ctx context.Context) (*[]internal.ProcessSnapshot, error) {
 	select {
 	case <-ctx.Done():
 		return nil, context.Canceled

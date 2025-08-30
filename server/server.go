@@ -24,8 +24,9 @@ import (
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/dbutil"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/filebrowser"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/logging"
 	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
@@ -48,9 +49,9 @@ type RunConfig struct {
 type serverConfig struct {
 	frontend fs.FS
 	swagger  fs.FS
-	mdb      *internal.MemoryDB
+	mdb      *kv.Store
 	db       *sql.DB
-	mq       *internal.MessageQueue
+	mq       *queue.MessageQueue
 	lm       *livestream.Monitor
 	tm       *twitch.Monitor
 }
@@ -59,7 +60,7 @@ type serverConfig struct {
 var observableLogger = logging.NewObservableLogger()
 
 func RunBlocking(rc *RunConfig) {
-	mdb := internal.NewMemoryDB()
+	mdb := kv.NewStore()
 
 	// ---- LOGGING ---------------------------------------------------
 	logWriters := []io.Writer{
@@ -105,7 +106,7 @@ func RunBlocking(rc *RunConfig) {
 		slog.Error("failed to init database", slog.String("err", err.Error()))
 	}
 
-	mq, err := internal.NewMessageQueue()
+	mq, err := queue.NewMessageQueue()
 	if err != nil {
 		panic(err)
 	}
@@ -283,7 +284,7 @@ func gracefulShutdown(srv *http.Server, cfg *serverConfig) {
 
 func autoPersist(
 	d time.Duration,
-	db *internal.MemoryDB,
+	db *kv.Store,
 	lm *livestream.Monitor,
 	tm *twitch.Monitor,
 ) {

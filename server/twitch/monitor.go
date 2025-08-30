@@ -13,7 +13,10 @@ import (
 	"time"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/pipes"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 )
 
 type Monitor struct {
@@ -40,7 +43,7 @@ func (m *Monitor) Add(user string) {
 	slog.Info("added user to twitch monitor", slog.String("user", user))
 }
 
-func (m *Monitor) Monitor(ctx context.Context, interval time.Duration, handler func(url string) error) {
+func (m *Monitor) Monitor(ctx context.Context, interval time.Duration, handler func(user string) error) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
@@ -64,7 +67,7 @@ func (m *Monitor) Monitor(ctx context.Context, interval time.Duration, handler f
 			wasLive := m.lastState[stream.UserName]
 			if stream.IsLive && !wasLive {
 				slog.Info("stream went live", slog.String("user", stream.UserName))
-				if err := handler(fmt.Sprintf("https://www.twitch.tv/%s", stream.UserName)); err != nil {
+				if err := handler(stream.UserName); err != nil {
 					slog.Error("handler failed", slog.String("user", stream.UserName), slog.Any("err", err))
 				}
 			}
@@ -90,15 +93,39 @@ func (m *Monitor) DeleteUser(user string) {
 	delete(m.lastState, user)
 }
 
-func DEFAULT_DOWNLOAD_HANDLER(db *internal.MemoryDB, mq *internal.MessageQueue) func(url string) error {
-	return func(url string) error {
-		p := &internal.Process{
-			Url:        url,
-			Livestream: true,
-			Params:     []string{"--downloader", "ffmpeg", "--no-part"},
-		}
-		db.Set(p)
-		mq.Publish(p)
+func DEFAULT_DOWNLOAD_HANDLER(db *kv.Store, mq *queue.MessageQueue) func(user string) error {
+	return func(user string) error {
+		var (
+			url      = fmt.Sprintf("https://www.twitch.tv/%s", user)
+			filename = filepath.Join(
+				config.Instance().DownloadPath,
+				fmt.Sprintf("%s (live) %s", user, time.Now().Format(time.ANSIC)),
+			)
+			ext  = ".webm"
+			path = filename + ext
+		)
+
+		d := downloaders.NewLiveStreamDownloader(url, []pipes.Pipe{
+			// &pipes.FileWriter{
+			// 	Path:    filename + ".mp4",
+			// 	IsFinal: false,
+			// },
+			&pipes.Transcoder{
+				Args: []string{
+					"-c:a", "libopus",
+					"-c:v", "libsvtav1",
+					"-crf", "30",
+					"-preset", "7",
+				},
+			},
+			&pipes.FileWriter{
+				Path:    path,
+				IsFinal: true,
+			},
+		})
+
+		db.Set(d)
+		mq.Publish(d)
 		return nil
 	}
 }

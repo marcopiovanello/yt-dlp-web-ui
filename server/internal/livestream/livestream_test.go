@@ -5,7 +5,8 @@ import (
 	"time"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 )
 
 func setupTest() {
@@ -19,7 +20,7 @@ func TestLivestream(t *testing.T) {
 
 	done := make(chan *LiveStream)
 
-	ls := New(URL, done, &internal.MessageQueue{}, &internal.MemoryDB{})
+	ls := New(URL, done, &queue.MessageQueue{}, &kv.Store{})
 	go ls.Start()
 
 	time.AfterFunc(time.Second*20, func() {

@@ -11,7 +11,9 @@ import (
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/domain"
 	"github.com/robfig/cron/v3"
 )
@@ -30,8 +32,8 @@ type monitorTask struct {
 }
 
 type CronTaskRunner struct {
-	mq *internal.MessageQueue
-	db *internal.MemoryDB
+	mq *queue.MessageQueue
+	db *kv.Store
 
 	tasks  chan monitorTask
 	errors chan error
@@ -39,7 +41,7 @@ type CronTaskRunner struct {
 	running map[string]*monitorTask
 }
 
-func NewCronTaskRunner(mq *internal.MessageQueue, db *internal.MemoryDB) TaskRunner {
+func NewCronTaskRunner(mq *queue.MessageQueue, db *kv.Store) TaskRunner {
 	return &CronTaskRunner{
 		mq:      mq,
 		db:      db,
@@ -148,20 +150,20 @@ func (t *CronTaskRunner) fetcher(ctx context.Context, req *monitorTask) time.Dur
 		return nextSchedule
 	}
 
-	p := &internal.Process{
-		Url: latestVideoURL,
-		Params: append(
+	// TODO: autoremove hook
+	d := downloaders.NewGenericDownload(
+		latestVideoURL,
+		append(
 			argsSplitterRe.FindAllString(req.Subscription.Params, 1),
 			[]string{
 				"--break-on-existing",
 				"--download-archive",
 				filepath.Join(config.Instance().Dir(), "archive.txt"),
 			}...),
-		AutoRemove: true,
-	}
+	)
 
-	t.db.Set(p)     // give it an id
-	t.mq.Publish(p) // send it to the message queue waiting to be processed
+	t.db.Set(d)     // give it an id
+	t.mq.Publish(d) // send it to the message queue waiting to be processed
 
 	slog.Info(
 		"cron task runner next schedule",

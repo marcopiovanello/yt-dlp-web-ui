@@ -6,18 +6,22 @@ import (
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/formats"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/playlist"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/sys"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/updater"
 )
 
 type Service struct {
-	db *internal.MemoryDB
-	mq *internal.MessageQueue
+	db *kv.Store
+	mq *queue.MessageQueue
 	lm *livestream.Monitor
 }
 
-type Running []internal.ProcessResponse
+type Running []internal.ProcessSnapshot
 type Pending []string
 
 type NoArgs struct{}
@@ -25,26 +29,23 @@ type NoArgs struct{}
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
-	p := &internal.Process{
-		Url:    args.URL,
-		Params: args.Params,
-		Output: internal.DownloadOutput{
-			Path:     args.Path,
-			Filename: args.Rename,
-		},
-	}
+	d := downloaders.NewGenericDownload(args.URL, args.Params)
+	d.SetOutput(internal.DownloadOutput{
+		Path:     args.Path,
+		Filename: args.Rename,
+	})
 
-	s.db.Set(p)
-	s.mq.Publish(p)
+	s.db.Set(d)
+	s.mq.Publish(d)
 
-	*result = p.Id
+	*result = d.GetId()
 	return nil
 }
 
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (s *Service) ExecPlaylist(args internal.DownloadRequest, result *string) error {
-	err := internal.PlaylistDetect(args, s.mq, s.db)
+	err := playlist.PlaylistDetect(args, s.mq, s.db)
 	if err != nil {
 		return err
 	}
@@ -87,12 +88,12 @@ func (s *Service) KillAllLivestream(args NoArgs, result *struct{}) error {
 
 // Progess retrieves the Progress of a specific Process given its Id
 func (s *Service) Progess(args internal.DownloadRequest, progress *internal.DownloadProgress) error {
-	proc, err := s.db.Get(args.Id)
+	dl, err := s.db.Get(args.Id)
 	if err != nil {
 		return err
 	}
 
-	*progress = proc.Progress
+	*progress = dl.Status().Progress
 	return nil
 }
 
@@ -106,7 +107,7 @@ func (s *Service) Formats(args internal.DownloadRequest, meta *formats.Metadata)
 	}
 
 	if metadata.IsPlaylist() {
-		go internal.PlaylistDetect(args, s.mq, s.db)
+		go playlist.PlaylistDetect(args, s.mq, s.db)
 	}
 
 	*meta = *metadata
@@ -129,22 +130,22 @@ func (s *Service) Running(args NoArgs, running *Running) error {
 func (s *Service) Kill(args string, killed *string) error {
 	slog.Info("Trying killing process with id", slog.String("id", args))
 
-	proc, err := s.db.Get(args)
+	download, err := s.db.Get(args)
 	if err != nil {
 		return err
 	}
 
-	if proc == nil {
+	if download == nil {
 		return errors.New("nil process")
 	}
 
-	if err := proc.Kill(); err != nil {
-		slog.Info("failed killing process", slog.String("id", proc.Id), slog.Any("err", err))
+	if err := download.Stop(); err != nil {
+		slog.Info("failed killing process", slog.String("id", download.GetId()), slog.Any("err", err))
 		return err
 	}
 
-	s.db.Delete(proc.Id)
-	slog.Info("succesfully killed process", slog.String("id", proc.Id))
+	s.db.Delete(download.GetId())
+	slog.Info("succesfully killed process", slog.String("id", download.GetId()))
 
 	return nil
 }
@@ -156,34 +157,33 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 
 	var (
 		keys       = s.db.Keys()
-		removeFunc = func(p *internal.Process) error {
-			defer s.db.Delete(p.Id)
-			return p.Kill()
+		removeFunc = func(d downloaders.Downloader) error {
+			defer s.db.Delete(d.GetId())
+			return d.Stop()
 		}
 	)
 
 	for _, key := range *keys {
-		proc, err := s.db.Get(key)
+		dl, err := s.db.Get(key)
 		if err != nil {
 			return err
 		}
 
-		if proc == nil {
+		if dl == nil {
 			s.db.Delete(key)
 			continue
 		}
 
-		if err := removeFunc(proc); err != nil {
+		if err := removeFunc(dl); err != nil {
 			slog.Info(
 				"failed killing process",
-				slog.String("id", proc.Id),
+				slog.String("id", dl.GetId()),
 				slog.Any("err", err),
 			)
 			continue
 		}
 
-		slog.Info("succesfully killed process", slog.String("id", proc.Id))
-		proc = nil // gc helper
+		slog.Info("succesfully killed process", slog.String("id", dl.GetId()))
 	}
 
 	return nil
@@ -200,14 +200,14 @@ func (s *Service) Clear(args string, killed *string) error {
 func (s *Service) ClearCompleted(cleared *string) error {
 	var (
 		keys       = s.db.Keys()
-		removeFunc = func(p *internal.Process) error {
-			defer s.db.Delete(p.Id)
+		removeFunc = func(d downloaders.Downloader) error {
+			defer s.db.Delete(d.GetId())
 
-			if p.Progress.Status != internal.StatusCompleted {
+			if !d.IsCompleted() {
 				return nil
 			}
 
-			return p.Kill()
+			return d.Stop()
 		}
 	)
 

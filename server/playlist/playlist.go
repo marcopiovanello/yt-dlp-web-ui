@@ -1,4 +1,4 @@
-package internal
+package playlist
 
 import (
 	"encoding/json"
@@ -11,10 +11,13 @@ import (
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/common"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/playlist"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 )
 
-func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
+func PlaylistDetect(req internal.DownloadRequest, mq *queue.MessageQueue, db *kv.Store) error {
 	params := append(req.Params, "--flat-playlist", "-J")
 	urlWithParams := append([]string{req.URL}, params...)
 
@@ -28,7 +31,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 		return err
 	}
 
-	var m playlist.Metadata
+	var m Metadata
 
 	if err := cmd.Start(); err != nil {
 		return err
@@ -51,17 +54,17 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 	}
 
 	if m.IsPlaylist() {
-		entries := slices.CompactFunc(slices.Compact(m.Entries), func(a common.DownloadInfo, b common.DownloadInfo) bool {
+		entries := slices.CompactFunc(slices.Compact(m.Entries), func(a common.DownloadMetadata, b common.DownloadMetadata) bool {
 			return a.URL == b.URL
 		})
 
-		entries = slices.DeleteFunc(entries, func(e common.DownloadInfo) bool {
+		entries = slices.DeleteFunc(entries, func(e common.DownloadMetadata) bool {
 			return strings.Contains(e.URL, "list=")
 		})
 
 		slog.Info("playlist detected", slog.String("url", req.URL), slog.Int("count", len(entries)))
 
-		if err := playlist.ApplyModifiers(&entries, req.Params); err != nil {
+		if err := ApplyModifiers(&entries, req.Params); err != nil {
 			return err
 		}
 
@@ -78,33 +81,22 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 			//XXX: it's idiotic but it works: virtually delay the creation time
 			meta.CreatedAt = time.Now().Add(time.Millisecond * time.Duration(i*10))
 
-			proc := &Process{
-				Url:      meta.URL,
-				Progress: DownloadProgress{},
-				Output:   DownloadOutput{Filename: req.Rename},
-				Info:     meta,
-				Params:   req.Params,
-			}
+			downloader := downloaders.NewGenericDownload(meta.URL, req.Params)
+			downloader.SetOutput(internal.DownloadOutput{Filename: req.Rename})
+			// downloader.SetMetadata(meta)
 
-			proc.Info.URL = meta.URL
-
-			db.Set(proc)
-			mq.Publish(proc)
-
-			proc.Info.CreatedAt = meta.CreatedAt
+			db.Set(downloader)
+			mq.Publish(downloader)
 		}
 
 		return nil
 	}
 
-	proc := &Process{
-		Url:    req.URL,
-		Params: req.Params,
-	}
+	d := downloaders.NewGenericDownload(req.URL, req.Params)
 
-	db.Set(proc)
-	mq.Publish(proc)
-	slog.Info("sending new process to message queue", slog.String("url", proc.Url))
+	db.Set(d)
+	mq.Publish(d)
+	slog.Info("sending new process to message queue", slog.String("url", d.GetUrl()))
 
 	return cmd.Wait()
 }

@@ -19,6 +19,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 )
 
 /*
@@ -207,9 +208,9 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusUnauthorized)
 }
 
-func BulkDownload(mdb *internal.MemoryDB) http.HandlerFunc {
+func BulkDownload(mdb *kv.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ps := slices.DeleteFunc(*mdb.All(), func(e internal.ProcessResponse) bool {
+		ps := slices.DeleteFunc(*mdb.All(), func(e internal.ProcessSnapshot) bool {
 			return e.Progress.Status != internal.StatusCompleted
 		})
 

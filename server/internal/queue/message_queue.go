@@ -1,4 +1,4 @@
-package internal
+package queue
 
 import (
 	"context"
@@ -7,6 +7,8 @@ import (
 
 	evbus "github.com/asaskevich/EventBus"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/metadata"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -35,9 +37,9 @@ func NewMessageQueue() (*MessageQueue, error) {
 }
 
 // Publish a message to the queue and set the task to a peding state.
-func (m *MessageQueue) Publish(p *Process) {
+func (m *MessageQueue) Publish(p downloaders.Downloader) {
 	// needs to have an id set before
-	p.SetPending()
+	p.SetPending(true)
 
 	m.eventBus.Publish(queueName, p)
 }
@@ -52,27 +54,22 @@ func (m *MessageQueue) SetupConsumers() {
 func (m *MessageQueue) downloadConsumer() {
 	sem := semaphore.NewWeighted(int64(m.concurrency))
 
-	m.eventBus.SubscribeAsync(queueName, func(p *Process) {
+	m.eventBus.SubscribeAsync(queueName, func(p downloaders.Downloader) {
 		sem.Acquire(context.Background(), 1)
 		defer sem.Release(1)
 
 		slog.Info("received process from event bus",
 			slog.String("bus", queueName),
 			slog.String("consumer", "downloadConsumer"),
-			slog.String("id", p.getShortId()),
+			slog.String("id", p.GetId()),
 		)
 
-		if p.Progress.Status != StatusCompleted {
+		if !p.IsCompleted() {
 			slog.Info("started process",
 				slog.String("bus", queueName),
-				slog.String("id", p.getShortId()),
+				slog.String("id", p.GetId()),
 			)
-			if p.Livestream {
-				// livestreams have higher priorty and they ignore the semaphore
-				go p.Start()
-			} else {
-				p.Start()
-			}
+			p.Start()
 		}
 	}, false)
 }
@@ -84,29 +81,25 @@ func (m *MessageQueue) metadataSubscriber() {
 	// Since there's ongoing downloads, 1 job at time seems a good compromise
 	sem := semaphore.NewWeighted(1)
 
-	m.eventBus.SubscribeAsync(queueName, func(p *Process) {
+	m.eventBus.SubscribeAsync(queueName, func(p downloaders.Downloader) {
 		sem.Acquire(context.Background(), 1)
 		defer sem.Release(1)
 
 		slog.Info("received process from event bus",
 			slog.String("bus", queueName),
 			slog.String("consumer", "metadataConsumer"),
-			slog.String("id", p.getShortId()),
+			slog.String("id", p.GetId()),
 		)
 
-		if p.Progress.Status == StatusCompleted {
+		if p.IsCompleted() {
 			slog.Warn("proccess has an illegal state",
-				slog.String("id", p.getShortId()),
-				slog.Int("status", p.Progress.Status),
+				slog.String("id", p.GetId()),
+				slog.String("status", "completed"),
 			)
 			return
 		}
 
-		if err := p.SetMetadata(); err != nil {
-			slog.Error("failed to retrieve metadata",
-				slog.String("id", p.getShortId()),
-				slog.String("err", err.Error()),
-			)
-		}
+		p.SetMetadata(metadata.DefaultFetcher)
+
 	}, false)
 }

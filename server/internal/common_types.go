@@ -33,18 +33,19 @@ type DownloadProgress struct {
 
 // struct representing the response sent to the client
 // as JSON-RPC result field
-type ProcessResponse struct {
-	Id       string              `json:"id"`
-	Progress DownloadProgress    `json:"progress"`
-	Info     common.DownloadInfo `json:"info"`
-	Output   DownloadOutput      `json:"output"`
-	Params   []string            `json:"params"`
+type ProcessSnapshot struct {
+	Id             string                  `json:"id"`
+	Progress       DownloadProgress        `json:"progress"`
+	Info           common.DownloadMetadata `json:"info"`
+	Output         DownloadOutput          `json:"output"`
+	Params         []string                `json:"params"`
+	DownloaderName string                  `json:"downloader_name"`
 }
 
 // struct representing the current status of the memoryDB
 // used for serializaton/persistence reasons
 type Session struct {
-	Processes []ProcessResponse `json:"processes"`
+	Snapshots []ProcessSnapshot `json:"processes"`
 }
 
 // struct representing the intent to stop a specific process
@@ -72,3 +73,11 @@ type CustomTemplate struct {
 	Name    string `json:"name"`
 	Content string `json:"content"`
 }
+
+const (
+	StatusPending = iota
+	StatusDownloading
+	StatusCompleted
+	StatusErrored
+	StatusLiveStream
+)

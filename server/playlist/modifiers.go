@@ -18,7 +18,7 @@ import (
 	--max-downloads NUMBER      |                 |   stops after N completed downloads
 */
 
-func ApplyModifiers(entries *[]common.DownloadInfo, args []string) error {
+func ApplyModifiers(entries *[]common.DownloadMetadata, args []string) error {
 	for i, modifier := range args {
 		switch modifier {
 		case "--playlist-start":
@@ -38,7 +38,7 @@ func ApplyModifiers(entries *[]common.DownloadInfo, args []string) error {
 	return nil
 }
 
-func playlistStart(i int, modifier string, args []string, entries *[]common.DownloadInfo) error {
+func playlistStart(i int, modifier string, args []string, entries *[]common.DownloadMetadata) error {
 	if !guard(i, len(modifier)) {
 		return nil
 	}
@@ -53,7 +53,7 @@ func playlistStart(i int, modifier string, args []string, entries *[]common.Down
 	return nil
 }
 
-func playlistEnd(i int, modifier string, args []string, entries *[]common.DownloadInfo) error {
+func playlistEnd(i int, modifier string, args []string, entries *[]common.DownloadMetadata) error {
 	if !guard(i, len(modifier)) {
 		return nil
 	}
@@ -68,7 +68,7 @@ func playlistEnd(i int, modifier string, args []string, entries *[]common.Downlo
 	return nil
 }
 
-func maxDownloads(i int, modifier string, args []string, entries *[]common.DownloadInfo) error {
+func maxDownloads(i int, modifier string, args []string, entries *[]common.DownloadMetadata) error {
 	if !guard(i, len(modifier)) {
 		return nil
 	}
