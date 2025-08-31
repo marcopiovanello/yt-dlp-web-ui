@@ -2,8 +2,9 @@ package rest
 
 import (
 	"context"
-	"database/sql"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -17,13 +18,33 @@ import (
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/playlist"
+
+	bolt "go.etcd.io/bbolt"
 )
 
 type Service struct {
 	mdb *kv.Store
-	db  *sql.DB
+	db  *bolt.DB
 	mq  *queue.MessageQueue
 	lm  *livestream.Monitor
+}
+
+func NewService(
+	mdb *kv.Store,
+	db *bolt.DB,
+	mq *queue.MessageQueue,
+	lm *livestream.Monitor,
+) *Service {
+	db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists([]byte("templates"))
+		return err
+	})
+	return &Service{
+		mdb: mdb,
+		db:  db,
+		mq:  mq,
+		lm:  lm,
+	}
 }
 
 func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
@@ -85,64 +106,56 @@ func (s *Service) SetCookies(ctx context.Context, cookies string) error {
 }
 
 func (s *Service) SaveTemplate(ctx context.Context, template *internal.CustomTemplate) error {
-	conn, err := s.db.Conn(ctx)
-	if err != nil {
-		return err
-	}
-
-	defer conn.Close()
-
-	_, err = conn.ExecContext(
-		ctx,
-		"INSERT INTO templates (id, name, content) VALUES (?, ?, ?)",
-		uuid.NewString(),
-		template.Name,
-		template.Content,
-	)
-
-	return err
+	return s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("templates"))
+		v, err := json.Marshal(template)
+		if err != nil {
+			return err
+		}
+		return b.Put([]byte(uuid.NewString()), v)
+	})
 }
 
 func (s *Service) GetTemplates(ctx context.Context) (*[]internal.CustomTemplate, error) {
-	conn, err := s.db.Conn(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	defer conn.Close()
-
-	rows, err := conn.QueryContext(ctx, "SELECT * FROM templates")
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
 	templates := make([]internal.CustomTemplate, 0)
 
-	for rows.Next() {
-		t := internal.CustomTemplate{}
-
-		err := rows.Scan(&t.Id, &t.Name, &t.Content)
-		if err != nil {
-			return nil, err
+	err := s.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("templates"))
+		if b == nil {
+			return nil // bucket vuoto, restituisco lista vuota
 		}
 
-		templates = append(templates, t)
+		return b.ForEach(func(k, v []byte) error {
+			var t internal.CustomTemplate
+			if err := json.Unmarshal(v, &t); err != nil {
+				return err
+			}
+			templates = append(templates, t)
+			return nil
+		})
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &templates, nil
 }
 
 func (s *Service) UpdateTemplate(ctx context.Context, t *internal.CustomTemplate) (*internal.CustomTemplate, error) {
-	conn, err := s.db.Conn(ctx)
+	data, err := json.Marshal(t)
 	if err != nil {
 		return nil, err
 	}
 
-	defer conn.Close()
+	err = s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("templates"))
+		if b == nil {
+			return fmt.Errorf("bucket templates not found")
+		}
+		return b.Put([]byte(t.Id), data)
+	})
 
-	_, err = conn.ExecContext(ctx, "UPDATE templates SET name = ?, content = ? WHERE id = ?", t.Name, t.Content, t.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -151,16 +164,10 @@ func (s *Service) UpdateTemplate(ctx context.Context, t *internal.CustomTemplate
 }
 
 func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
-	conn, err := s.db.Conn(ctx)
-	if err != nil {
-		return err
-	}
-
-	defer conn.Close()
-
-	_, err = conn.ExecContext(ctx, "DELETE FROM templates WHERE id = ?", id)
-
-	return err
+	return s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("templates"))
+		return b.Delete([]byte(id))
+	})
 }
 
 func (s *Service) GetVersion(ctx context.Context) (string, string, error) {

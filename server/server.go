@@ -3,7 +3,6 @@ package server
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"io"
 	"io/fs"
@@ -13,16 +12,14 @@ import (
 	"net/rpc"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archiver"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/dbutil"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/filebrowser"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
@@ -38,7 +35,7 @@ import (
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/twitch"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/user"
 
-	_ "modernc.org/sqlite"
+	bolt "go.etcd.io/bbolt"
 )
 
 type RunConfig struct {
@@ -50,7 +47,7 @@ type serverConfig struct {
 	frontend fs.FS
 	swagger  fs.FS
 	mdb      *kv.Store
-	db       *sql.DB
+	db       *bolt.DB
 	mq       *queue.MessageQueue
 	lm       *livestream.Monitor
 	tm       *twitch.Monitor
@@ -60,7 +57,17 @@ type serverConfig struct {
 var observableLogger = logging.NewObservableLogger()
 
 func RunBlocking(rc *RunConfig) {
-	mdb := kv.NewStore()
+	dbPath := filepath.Join(config.Instance().SessionFilePath, "bolt.db")
+
+	boltdb, err := bolt.Open(dbPath, 0600, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	mdb, err := kv.NewStore(boltdb, time.Second*15)
+	if err != nil {
+		panic(err)
+	}
 
 	// ---- LOGGING ---------------------------------------------------
 	logWriters := []io.Writer{
@@ -97,15 +104,6 @@ func RunBlocking(rc *RunConfig) {
 	slog.SetDefault(logger)
 	// ----------------------------------------------------------------
 
-	db, err := sql.Open("sqlite", conf.LocalDatabasePath)
-	if err != nil {
-		slog.Error("failed to open database", slog.String("err", err.Error()))
-	}
-
-	if err := dbutil.Migrate(context.Background(), db); err != nil {
-		slog.Error("failed to init database", slog.String("err", err.Error()))
-	}
-
 	mq, err := queue.NewMessageQueue()
 	if err != nil {
 		panic(err)
@@ -114,7 +112,7 @@ func RunBlocking(rc *RunConfig) {
 	go mdb.Restore(mq)
 	go mdb.EventListener()
 
-	lm := livestream.NewMonitor(mq, mdb)
+	lm := livestream.NewMonitor(mq, mdb, boltdb)
 	go lm.Schedule()
 	go lm.Restore()
 
@@ -123,6 +121,7 @@ func RunBlocking(rc *RunConfig) {
 			config.Instance().Twitch.ClientId,
 			config.Instance().Twitch.ClientSecret,
 		),
+		boltdb,
 	)
 	go tm.Monitor(
 		context.TODO(),
@@ -135,8 +134,8 @@ func RunBlocking(rc *RunConfig) {
 		frontend: rc.App,
 		swagger:  rc.Swagger,
 		mdb:      mdb,
+		db:       boltdb,
 		mq:       mq,
-		db:       db,
 		lm:       lm,
 		tm:       tm,
 	}
@@ -144,7 +143,6 @@ func RunBlocking(rc *RunConfig) {
 	srv := newServer(scfg)
 
 	go gracefulShutdown(srv, &scfg)
-	go autoPersist(time.Minute*5, mdb, lm, tm)
 
 	var (
 		network = "tcp"
@@ -171,7 +169,7 @@ func RunBlocking(rc *RunConfig) {
 }
 
 func newServer(c serverConfig) *http.Server {
-	archiver.Register(c.db)
+	// archiver.Register(c.db)
 
 	cronTaskRunner := task.NewCronTaskRunner(c.mq, c.mdb)
 	go cronTaskRunner.Spawner(context.TODO())
@@ -216,7 +214,7 @@ func newServer(c serverConfig) *http.Server {
 	})
 
 	// Archive routes
-	r.Route("/archive", archive.ApplyRouter(c.db))
+	// r.Route("/archive", archive.ApplyRouter(c.db))
 
 	// Authentication routes
 	r.Route("/auth", func(r chi.Router) {
@@ -238,6 +236,7 @@ func newServer(c serverConfig) *http.Server {
 		DB:  c.db,
 		MDB: c.mdb,
 		MQ:  c.mq,
+		LM:  c.lm,
 	}))
 
 	// Logging
@@ -273,34 +272,10 @@ func gracefulShutdown(srv *http.Server, cfg *serverConfig) {
 
 		defer func() {
 			cfg.mdb.Persist()
-			cfg.lm.Persist()
-			cfg.tm.Persist()
+			cfg.db.Close()
 
 			stop()
 			srv.Shutdown(context.Background())
 		}()
 	}()
-}
-
-func autoPersist(
-	d time.Duration,
-	db *kv.Store,
-	lm *livestream.Monitor,
-	tm *twitch.Monitor,
-) {
-	for {
-		time.Sleep(d)
-		if err := db.Persist(); err != nil {
-			slog.Warn("failed to persisted session", slog.Any("err", err))
-		}
-		if err := lm.Persist(); err != nil {
-			slog.Warn(
-				"failed to persisted livestreams monitor session", slog.Any("err", err.Error()))
-		}
-		if err := tm.Persist(); err != nil {
-			slog.Warn(
-				"failed to persisted twitch monitor session", slog.Any("err", err.Error()))
-		}
-		slog.Debug("sucessfully persisted session")
-	}
 }

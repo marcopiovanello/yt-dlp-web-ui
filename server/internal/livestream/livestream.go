@@ -35,11 +35,11 @@ type LiveStream struct {
 	waitTime     time.Duration
 	liveDate     time.Time
 
-	mq *queue.MessageQueue
-	db *kv.Store
+	mq    *queue.MessageQueue
+	store *kv.Store
 }
 
-func New(url string, done chan *LiveStream, mq *queue.MessageQueue, db *kv.Store) *LiveStream {
+func New(url string, done chan *LiveStream, mq *queue.MessageQueue, store *kv.Store) *LiveStream {
 	return &LiveStream{
 		url:          url,
 		done:         done,
@@ -47,7 +47,7 @@ func New(url string, done chan *LiveStream, mq *queue.MessageQueue, db *kv.Store
 		waitTime:     time.Second * 0,
 		waitTimeChan: make(chan time.Duration),
 		mq:           mq,
-		db:           db,
+		store:        store,
 	}
 }
 
@@ -94,7 +94,7 @@ func (l *LiveStream) Start() error {
 	//TODO: add pipes
 	d := downloaders.NewLiveStreamDownloader(l.url, []pipes.Pipe{})
 
-	l.db.Set(d)
+	l.store.Set(d)
 	l.mq.Publish(d)
 
 	return nil

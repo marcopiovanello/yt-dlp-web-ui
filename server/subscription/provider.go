@@ -1,7 +1,6 @@
 package subscription
 
 import (
-	"database/sql"
 	"sync"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/domain"
@@ -9,6 +8,8 @@ import (
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/rest"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/service"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/task"
+
+	bolt "go.etcd.io/bbolt"
 )
 
 var (
@@ -21,7 +22,7 @@ var (
 	handOnce sync.Once
 )
 
-func provideRepository(db *sql.DB) domain.Repository {
+func provideRepository(db *bolt.DB) domain.Repository {
 	repoOnce.Do(func() {
 		repo = repository.New(db)
 	})

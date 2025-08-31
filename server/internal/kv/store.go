@@ -2,31 +2,58 @@ package kv
 
 import (
 	"encoding/gob"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"runtime"
 	"sync"
+	"time"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
+
+	bolt "go.etcd.io/bbolt"
 )
 
-var memDbEvents = make(chan downloaders.Downloader, runtime.NumCPU())
+var (
+	bucket      = []byte("downloads")
+	memDbEvents = make(chan downloaders.Downloader, runtime.NumCPU())
+)
 
 // In-Memory Thread-Safe Key-Value Storage with optional persistence
 type Store struct {
+	db    *bolt.DB
 	table map[string]downloaders.Downloader
 	mu    sync.RWMutex
 }
 
-func NewStore() *Store {
-	return &Store{
+func NewStore(db *bolt.DB, snaptshotInteval time.Duration) (*Store, error) {
+	// init bucket
+	err := db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists(bucket)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	s := &Store{
+		db:    db,
 		table: make(map[string]downloaders.Downloader),
 	}
+
+	go func() {
+		ticker := time.NewTicker(snaptshotInteval)
+		for range ticker.C {
+			s.Snapshot()
+		}
+	}()
+
+	return s, err
 }
 
 // Get a process pointer given its id
@@ -108,25 +135,25 @@ func (m *Store) Persist() error {
 
 // Restore a persisted state
 func (m *Store) Restore(mq *queue.MessageQueue) {
-	sf := filepath.Join(config.Instance().SessionFilePath, "session.dat")
-
-	fd, err := os.Open(sf)
-	if err != nil {
-		return
-	}
-
-	var session Session
-
-	if err := gob.NewDecoder(fd).Decode(&session); err != nil {
-		return
-	}
-
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	for _, snap := range session.Processes {
-		var restored downloaders.Downloader
+	var snapshot []internal.ProcessSnapshot
 
+	m.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket)
+		return b.ForEach(func(k, v []byte) error {
+			var snap internal.ProcessSnapshot
+			if err := json.Unmarshal(v, &snap); err != nil {
+				return err
+			}
+			snapshot = append(snapshot, snap)
+			return nil
+		})
+	})
+
+	for _, snap := range snapshot {
+		var restored downloaders.Downloader
 		if snap.DownloaderName == "generic" {
 			d := downloaders.NewGenericDownload("", []string{})
 			err := d.RestoreFromSnapshot(&snap)
@@ -134,9 +161,7 @@ func (m *Store) Restore(mq *queue.MessageQueue) {
 				continue
 			}
 			restored = d
-
 			m.table[snap.Id] = restored
-
 			if !restored.(*downloaders.GenericDownloader).DownloaderBase.Completed {
 				mq.Publish(restored)
 			}
@@ -151,4 +176,24 @@ func (m *Store) EventListener() {
 			m.Delete(p.GetId())
 		}
 	}
+}
+
+func (m *Store) Snapshot() error {
+	slog.Debug("snapshotting downloads state")
+
+	running := m.All()
+
+	return m.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket)
+		for _, v := range *running {
+			data, err := json.Marshal(v)
+			if err != nil {
+				return err
+			}
+			if err := b.Put([]byte(v.Id), data); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }

@@ -2,131 +2,142 @@ package repository
 
 import (
 	"context"
-	"database/sql"
+	"encoding/json"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/data"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/domain"
+	bolt "go.etcd.io/bbolt"
 )
 
+var bucketName = []byte("subscriptions")
+
 type Repository struct {
-	db *sql.DB
+	db *bolt.DB
 }
 
 // Delete implements domain.Repository.
 func (r *Repository) Delete(ctx context.Context, id string) error {
-	conn, err := r.db.Conn(ctx)
-	if err != nil {
-		return err
-	}
-
-	defer conn.Close()
-
-	_, err = conn.ExecContext(ctx, "DELETE FROM subscriptions WHERE id = ?", id)
-
-	return err
+	return r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucketName)
+		return b.Delete([]byte(id))
+	})
 }
 
 // GetCursor implements domain.Repository.
-func (r *Repository) GetCursor(ctx context.Context, id string) (int64, error) {
-	conn, err := r.db.Conn(ctx)
+func (s *Repository) GetCursor(ctx context.Context, id string) (int64, error) {
+	var cursor int64
+
+	err := s.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("subscriptions"))
+		v := b.Get([]byte(id))
+		if v == nil {
+			return fmt.Errorf("subscription %s not found", id)
+		}
+
+		var data struct {
+			Cursor int64 `json:"cursor"`
+		}
+
+		if err := json.Unmarshal(v, &data); err != nil {
+			return err
+		}
+		cursor = data.Cursor
+		return nil
+	})
+
 	if err != nil {
 		return -1, err
 	}
 
-	defer conn.Close()
-
-	row := conn.QueryRowContext(ctx, "SELECT rowid FROM subscriptions WHERE id = ?", id)
-
-	var rowId int64
-
-	if err := row.Scan(&rowId); err != nil {
-		return -1, err
-	}
-
-	return rowId, nil
+	return cursor, nil
 }
 
 // List implements domain.Repository.
 func (r *Repository) List(ctx context.Context, start int64, limit int) (*[]data.Subscription, error) {
-	conn, err := r.db.Conn(ctx)
+	var subs []data.Subscription
+
+	err := r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucketName)
+		return b.ForEach(func(k, v []byte) error {
+			var sub data.Subscription
+			if err := json.Unmarshal(v, &sub); err != nil {
+				return err
+			}
+			subs = append(subs, sub)
+			return nil
+		})
+	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	defer conn.Close()
-
-	var elements []data.Subscription
-
-	rows, err := conn.QueryContext(ctx, "SELECT rowid, * FROM subscriptions WHERE rowid > ? LIMIT ?", start, limit)
-	if err != nil {
-		return nil, err
-	}
-
-	for rows.Next() {
-		var rowId int64
-		var element data.Subscription
-
-		if err := rows.Scan(
-			&rowId,
-			&element.Id,
-			&element.URL,
-			&element.Params,
-			&element.CronExpr,
-		); err != nil {
-			return &elements, err
-		}
-
-		elements = append(elements, element)
-	}
-
-	return &elements, nil
+	return &subs, nil
 }
 
 // Submit implements domain.Repository.
-func (r *Repository) Submit(ctx context.Context, sub *data.Subscription) (*data.Subscription, error) {
-	conn, err := r.db.Conn(ctx)
+func (s *Repository) Submit(ctx context.Context, sub *data.Subscription) (*data.Subscription, error) {
+	if sub.Id == "" {
+		sub.Id = uuid.NewString()
+	}
+
+	data, err := json.Marshal(sub)
 	if err != nil {
 		return nil, err
 	}
 
-	defer conn.Close()
+	err = s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("subscriptions"))
+		return b.Put([]byte(sub.Id), data)
+	})
 
-	_, err = conn.ExecContext(
-		ctx,
-		"INSERT INTO subscriptions (id, url, params, cron) VALUES (?, ?, ?, ?)",
-		uuid.NewString(),
-		sub.URL,
-		sub.Params,
-		sub.CronExpr,
-	)
+	if err != nil {
+		return nil, err
+	}
 
-	return sub, err
+	return sub, nil
 }
 
 // UpdateByExample implements domain.Repository.
-func (r *Repository) UpdateByExample(ctx context.Context, example *data.Subscription) error {
-	conn, err := r.db.Conn(ctx)
-	if err != nil {
-		return err
-	}
+func (s *Repository) UpdateByExample(ctx context.Context, example *data.Subscription) error {
+	return s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("subscriptions"))
 
-	defer conn.Close()
+		return b.ForEach(func(k, v []byte) error {
+			var sub data.Subscription
+			if err := json.Unmarshal(v, &sub); err != nil {
+				return err
+			}
 
-	_, err = conn.ExecContext(
-		ctx,
-		"UPDATE subscriptions SET url = ?, params = ?, cron = ? WHERE id = ? OR url = ?",
-		example.URL,
-		example.Params,
-		example.CronExpr,
-		example.Id,
-		example.URL,
-	)
+			if sub.Id == example.Id || sub.URL == example.URL {
+				// aggiorna i campi
+				sub.URL = example.URL
+				sub.Params = example.Params
+				sub.CronExpr = example.CronExpr
 
-	return err
+				data, err := json.Marshal(sub)
+				if err != nil {
+					return err
+				}
+
+				if err := b.Put(k, data); err != nil {
+					return err
+				}
+			}
+
+			return nil
+		})
+	})
 }
 
-func New(db *sql.DB) domain.Repository {
+func New(db *bolt.DB) domain.Repository {
+	db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists(bucketName)
+		return err
+	})
+
 	return &Repository{
 		db: db,
 	}

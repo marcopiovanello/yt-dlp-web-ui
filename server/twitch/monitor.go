@@ -2,12 +2,10 @@ package twitch
 
 import (
 	"context"
-	"encoding/gob"
 	"fmt"
 	"iter"
 	"log/slog"
 	"maps"
-	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -17,29 +15,48 @@ import (
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/pipes"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
+
+	bolt "go.etcd.io/bbolt"
 )
+
+var bucket = []byte("twitch-monitor")
 
 type Monitor struct {
 	liveChannel           chan *StreamInfo
 	monitored             map[string]*Client
 	lastState             map[string]bool
 	mu                    sync.RWMutex
+	db                    *bolt.DB
 	authenticationManager *AuthenticationManager
 }
 
-func NewMonitor(authenticationManager *AuthenticationManager) *Monitor {
+func NewMonitor(authenticationManager *AuthenticationManager, db *bolt.DB) *Monitor {
+	db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists(bucket)
+		return err
+	})
+
 	return &Monitor{
 		liveChannel:           make(chan *StreamInfo, 16),
 		monitored:             make(map[string]*Client),
 		lastState:             make(map[string]bool),
 		authenticationManager: authenticationManager,
+		db:                    db,
 	}
 }
 
 func (m *Monitor) Add(user string) {
 	m.mu.Lock()
-	defer m.mu.Unlock()
 	m.monitored[user] = NewTwitchClient(m.authenticationManager)
+	m.mu.Unlock()
+
+	m.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket)
+		//TODO: the empty byte array will be replaced with configs per user
+		err := b.Put([]byte(user), []byte(""))
+		return err
+	})
+
 	slog.Info("added user to twitch monitor", slog.String("user", user))
 }
 
@@ -88,9 +105,15 @@ func (m *Monitor) GetMonitoredUsers() iter.Seq[string] {
 
 func (m *Monitor) DeleteUser(user string) {
 	m.mu.Lock()
-	defer m.mu.Unlock()
 	delete(m.monitored, user)
 	delete(m.lastState, user)
+	m.mu.Unlock()
+
+	m.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket)
+		err := b.Delete([]byte(user))
+		return err
+	})
 }
 
 func DEFAULT_DOWNLOAD_HANDLER(db *kv.Store, mq *queue.MessageQueue) func(user string) error {
@@ -106,10 +129,6 @@ func DEFAULT_DOWNLOAD_HANDLER(db *kv.Store, mq *queue.MessageQueue) func(user st
 		)
 
 		d := downloaders.NewLiveStreamDownloader(url, []pipes.Pipe{
-			// &pipes.FileWriter{
-			// 	Path:    filename + ".mp4",
-			// 	IsFinal: false,
-			// },
 			&pipes.Transcoder{
 				Args: []string{
 					"-c:a", "libopus",
@@ -130,42 +149,16 @@ func DEFAULT_DOWNLOAD_HANDLER(db *kv.Store, mq *queue.MessageQueue) func(user st
 	}
 }
 
-func (m *Monitor) Persist() error {
-	filename := filepath.Join(config.Instance().SessionFilePath, "twitch-monitor.dat")
-
-	f, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	enc := gob.NewEncoder(f)
-	users := make([]string, 0, len(m.monitored))
-
-	for user := range m.monitored {
-		users = append(users, user)
-	}
-
-	return enc.Encode(users)
-}
-
 func (m *Monitor) Restore() error {
-	filename := filepath.Join(config.Instance().SessionFilePath, "twitch-monitor.dat")
-
-	f, err := os.Open(filename)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return nil
-		}
-		return err
-	}
-	defer f.Close()
-
-	dec := gob.NewDecoder(f)
 	var users []string
-	if err := dec.Decode(&users); err != nil {
-		return err
-	}
+
+	m.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket)
+		return b.ForEach(func(k, v []byte) error {
+			users = append(users, string(k))
+			return nil
+		})
+	})
 
 	m.monitored = make(map[string]*Client)
 	for _, user := range users {
