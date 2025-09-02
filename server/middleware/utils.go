@@ -8,15 +8,14 @@ import (
 )
 
 func ApplyAuthenticationByConfig(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if config.Instance().RequireAuth {
-			Authenticated(next)
-			return
-		}
-		if config.Instance().UseOpenId {
-			openid.Middleware(next)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
+    handler := next
+
+    if config.Instance().RequireAuth {
+        handler = Authenticated(handler)
+    }
+    if config.Instance().UseOpenId {
+        handler = openid.Middleware(handler)
+    }
+
+    return handler
 }
