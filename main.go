@@ -1,117 +1,102 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"flag"
 	"io/fs"
-	"log"
+	"log/slog"
 	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/cli"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
+
+	"github.com/spf13/viper"
 )
 
-var (
-	host              string
-	port              int
-	queueSize         int
-	configFile        string
-	downloadPath      string
-	downloaderPath    string
-	sessionFilePath   string
-	localDatabasePath string
-	frontendPath      string
+//go:embed frontend/dist/index.html
+//go:embed frontend/dist/assets/*
+var frontend embed.FS
 
-	requireAuth bool
-	username    string
-	password    string
-
-	userFromEnv = os.Getenv("USERNAME")
-	passFromEnv = os.Getenv("PASSWORD")
-
-	logFile           string
-	enableFileLogging bool
-
-	//go:embed frontend/dist/index.html
-	//go:embed frontend/dist/assets/*
-	frontend embed.FS
-
-	//go:embed openapi/*
-	swagger embed.FS
-)
-
-func init() {
-	flag.StringVar(&host, "host", "0.0.0.0", "Host where server will listen at")
-	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
-	flag.IntVar(&queueSize, "qs", 2, "Queue size (concurrent downloads)")
-
-	flag.StringVar(&configFile, "conf", "./config.yml", "Config file path")
-	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
-	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
-	flag.StringVar(&sessionFilePath, "session", ".", "session file path")
-	flag.StringVar(&localDatabasePath, "db", "local.db", "local database path")
-	flag.StringVar(&frontendPath, "web", "", "frontend web resources path")
-
-	flag.BoolVar(&enableFileLogging, "fl", false, "enable outputting logs to a file")
-	flag.StringVar(&logFile, "lf", "yt-dlp-webui.log", "set log file location")
-
-	flag.BoolVar(&requireAuth, "auth", false, "Enable RPC authentication")
-	flag.StringVar(&username, "user", userFromEnv, "Username required for auth")
-	flag.StringVar(&password, "pass", passFromEnv, "Password required for auth")
-
-	flag.Parse()
-}
+//go:embed openapi/*
+var swagger embed.FS
 
 func main() {
-	frontend, err := fs.Sub(frontend, "frontend/dist")
-	if err != nil {
-		log.Fatalln(err)
+	// Parse optional config path from flag
+	var configFile string
+	flag.StringVar(&configFile, "conf", "./config.yml", "Config file path")
+	flag.Parse()
+
+	v := viper.New()
+	v.SetConfigFile(configFile)
+	v.SetConfigType("yaml")
+
+	// Defaults
+	v.SetDefault("server.host", "0.0.0.0")
+	v.SetDefault("server.port", 3033)
+	v.SetDefault("server.queue_size", 2)
+	v.SetDefault("paths.download_path", ".")
+	v.SetDefault("paths.downloader_path", "yt-dlp")
+	v.SetDefault("paths.local_database_path", ".")
+	v.SetDefault("logging.log_path", "yt-dlp-webui.log")
+	v.SetDefault("logging.enable_file_logging", false)
+	v.SetDefault("authentication.require_auth", false)
+
+	// Env binding
+	v.SetEnvPrefix("APP")
+	v.AutomaticEnv()
+
+	// Load YAML file if exists
+	if err := v.ReadInConfig(); err != nil {
+		slog.Debug("using defaults")
 	}
 
-	if frontendPath != "" {
-		frontend = os.DirFS(frontendPath)
+	cfg := config.Instance()
+	if err := v.Unmarshal(&cfg); err != nil {
+		slog.Error("failed to load config", "error", err)
 	}
 
-	c := config.Instance()
-
-	{
-		// init the config struct with the values from flags
-		// TODO: find an alternative way to populate the config struct from flags or config file
-		c.Host = host
-		c.Port = port
-
-		c.QueueSize = queueSize
-
-		c.DownloadPath = downloadPath
-		c.DownloaderPath = downloaderPath
-		c.SessionFilePath = sessionFilePath
-		c.LocalDatabasePath = localDatabasePath
-
-		c.LogPath = logFile
-		c.EnableFileLogging = enableFileLogging
-
-		c.RequireAuth = requireAuth
-		c.Username = username
-		c.Password = password
+	if cfg.Server.QueueSize <= 0 || runtime.NumCPU() <= 2 {
+		cfg.Server.QueueSize = 2
 	}
 
-	// limit concurrent downloads for systems with 2 or less logical cores
-	if runtime.NumCPU() <= 2 {
-		c.QueueSize = 1
+	// 6. Frontend FS
+	var appFS fs.FS
+	if fp := v.GetString("frontend_path"); fp != "" {
+		appFS = os.DirFS(fp)
+	} else {
+		sub, err := fs.Sub(frontend, "frontend/dist")
+		if err != nil {
+			slog.Error("failed to load embedded frontend", "error", err)
+			os.Exit(1)
+		}
+		appFS = sub
 	}
 
-	// if config file is found it will be merged with the current config struct
-	if err := c.LoadFile(configFile); err != nil {
-		log.Println(cli.BgRed, "config", cli.Reset, err)
-	}
-
+	// Configure OpenID if needed
 	openid.Configure()
 
-	server.RunBlocking(&server.RunConfig{
-		App:     frontend,
+	// Graceful shutdown
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	slog.Info("starting server",
+		"host", cfg.Server.Host,
+		"port", cfg.Server.Port,
+		"queue_size", cfg.Server.QueueSize,
+	)
+
+	if err := server.Run(ctx, &server.RunConfig{
+		App:     appFS,
 		Swagger: swagger,
-	})
+	}); err != nil {
+		slog.Error("server stopped with error", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info("server exited cleanly")
 }

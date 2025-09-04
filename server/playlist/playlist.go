@@ -22,7 +22,7 @@ func PlaylistDetect(req internal.DownloadRequest, mq *queue.MessageQueue, db *kv
 	urlWithParams := append([]string{req.URL}, params...)
 
 	var (
-		downloader = config.Instance().DownloaderPath
+		downloader = config.Instance().Paths.DownloaderPath
 		cmd        = exec.Command(downloader, urlWithParams...)
 	)
 

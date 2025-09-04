@@ -17,6 +17,11 @@ type Monitor struct {
 }
 
 func NewMonitor(mq *queue.MessageQueue, store *kv.Store, db *bolt.DB) *Monitor {
+	db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists(bucket)
+		return err
+	})
+
 	return &Monitor{
 		mq:      mq,
 		db:      db,

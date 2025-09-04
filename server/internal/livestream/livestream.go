@@ -54,13 +54,13 @@ func New(url string, done chan *LiveStream, mq *queue.MessageQueue, store *kv.St
 // Start the livestream monitoring process, once completion signals on the done channel
 func (l *LiveStream) Start() error {
 	cmd := exec.Command(
-		config.Instance().DownloaderPath,
+		config.Instance().Paths.DownloaderPath,
 		l.url,
 		"--wait-for-video", "30", // wait for the stream to be live and recheck every 10 secs
 		"--no-colors", // no ansi color fuzz
 		"--simulate",
 		"--newline",
-		"--paths", config.Instance().DownloadPath,
+		"--paths", config.Instance().Paths.DownloadPath,
 	)
 
 	stdout, err := cmd.StdoutPipe()

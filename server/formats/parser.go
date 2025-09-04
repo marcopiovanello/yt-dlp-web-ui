@@ -10,7 +10,7 @@ import (
 )
 
 func ParseURL(url string) (*Metadata, error) {
-	cmd := exec.Command(config.Instance().DownloaderPath, url, "-J")
+	cmd := exec.Command(config.Instance().Paths.DownloaderPath, url, "-J")
 
 	stdout, err := cmd.Output()
 	if err != nil {

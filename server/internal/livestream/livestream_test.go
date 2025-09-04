@@ -10,7 +10,7 @@ import (
 )
 
 func setupTest() {
-	config.Instance().DownloaderPath = "build/yt-dlp"
+	config.Instance().Paths.DownloaderPath = "build/yt-dlp"
 }
 
 const URL = "https://www.youtube.com/watch?v=pwoAyLGOysU"

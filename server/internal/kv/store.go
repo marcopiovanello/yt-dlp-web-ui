@@ -1,17 +1,13 @@
 package kv
 
 import (
-	"encoding/gob"
 	"encoding/json"
 	"errors"
 	"log/slog"
-	"os"
-	"path/filepath"
 	"runtime"
 	"sync"
 	"time"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
@@ -109,28 +105,6 @@ func (m *Store) All() *[]internal.ProcessSnapshot {
 	m.mu.RUnlock()
 
 	return &running
-}
-
-// Persist the database in a single file named "session.dat"
-func (m *Store) Persist() error {
-	running := m.All()
-
-	sf := filepath.Join(config.Instance().SessionFilePath, "session.dat")
-
-	fd, err := os.Create(sf)
-	if err != nil {
-		return errors.Join(errors.New("failed to persist session"), err)
-	}
-
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	session := Session{Processes: *running}
-
-	if err := gob.NewEncoder(fd).Encode(session); err != nil {
-		return errors.Join(errors.New("failed to persist session"), err)
-	}
-
-	return nil
 }
 
 // Restore a persisted state

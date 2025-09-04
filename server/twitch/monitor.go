@@ -121,7 +121,7 @@ func DEFAULT_DOWNLOAD_HANDLER(db *kv.Store, mq *queue.MessageQueue) func(user st
 		var (
 			url      = fmt.Sprintf("https://www.twitch.tv/%s", user)
 			filename = filepath.Join(
-				config.Instance().DownloadPath,
+				config.Instance().Paths.DownloadPath,
 				fmt.Sprintf("%s (live) %s", user, time.Now().Format(time.ANSIC)),
 			)
 			ext  = ".webm"

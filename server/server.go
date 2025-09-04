@@ -11,10 +11,8 @@ import (
 	"net/http"
 	"net/rpc"
 	"os"
-	"os/signal"
 	"path/filepath"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -23,6 +21,7 @@ import (
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/filebrowser"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/pipeline"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/logging"
 	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
@@ -44,29 +43,30 @@ type RunConfig struct {
 }
 
 type serverConfig struct {
-	frontend fs.FS
-	swagger  fs.FS
-	mdb      *kv.Store
-	db       *bolt.DB
-	mq       *queue.MessageQueue
-	lm       *livestream.Monitor
-	tm       *twitch.Monitor
+	frontend      fs.FS
+	swagger       fs.FS
+	mdb           *kv.Store
+	db            *bolt.DB
+	mq            *queue.MessageQueue
+	lm            *livestream.Monitor
+	taskRunner    task.TaskRunner
+	twitchMonitor *twitch.Monitor
 }
 
 // TODO: change scope
 var observableLogger = logging.NewObservableLogger()
 
-func RunBlocking(rc *RunConfig) {
-	dbPath := filepath.Join(config.Instance().SessionFilePath, "bolt.db")
+func Run(ctx context.Context, rc *RunConfig) error {
+	dbPath := filepath.Join(config.Instance().Paths.LocalDatabasePath, "bolt.db")
 
 	boltdb, err := bolt.Open(dbPath, 0600, nil)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	mdb, err := kv.NewStore(boltdb, time.Second*15)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// ---- LOGGING ---------------------------------------------------
@@ -78,10 +78,10 @@ func RunBlocking(rc *RunConfig) {
 	conf := config.Instance()
 
 	// file based logging
-	if conf.EnableFileLogging {
-		logger, err := logging.NewRotableLogger(conf.LogPath)
+	if conf.Logging.EnableFileLogging {
+		logger, err := logging.NewRotableLogger(conf.Logging.LogPath)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		defer logger.Rotate()
@@ -106,7 +106,7 @@ func RunBlocking(rc *RunConfig) {
 
 	mq, err := queue.NewMessageQueue()
 	if err != nil {
-		panic(err)
+		return err
 	}
 	mq.SetupConsumers()
 	go mdb.Restore(mq)
@@ -124,41 +124,45 @@ func RunBlocking(rc *RunConfig) {
 		boltdb,
 	)
 	go tm.Monitor(
-		context.TODO(),
+		ctx,
 		config.Instance().Twitch.CheckInterval,
 		twitch.DEFAULT_DOWNLOAD_HANDLER(mdb, mq),
 	)
 	go tm.Restore()
 
+	cronTaskRunner := task.NewCronTaskRunner(mq, mdb)
+	go cronTaskRunner.Spawner(ctx)
+
 	scfg := serverConfig{
-		frontend: rc.App,
-		swagger:  rc.Swagger,
-		mdb:      mdb,
-		db:       boltdb,
-		mq:       mq,
-		lm:       lm,
-		tm:       tm,
+		frontend:      rc.App,
+		swagger:       rc.Swagger,
+		mdb:           mdb,
+		db:            boltdb,
+		mq:            mq,
+		lm:            lm,
+		twitchMonitor: tm,
+		taskRunner:    cronTaskRunner,
 	}
 
 	srv := newServer(scfg)
 
-	go gracefulShutdown(srv, &scfg)
+	go gracefulShutdown(ctx, srv, &scfg)
 
 	var (
 		network = "tcp"
-		address = fmt.Sprintf("%s:%d", conf.Host, conf.Port)
+		address = fmt.Sprintf("%s:%d", conf.Server.Host, conf.Server.Port)
 	)
 
 	// support unix sockets
-	if strings.HasPrefix(conf.Host, "/") {
+	if strings.HasPrefix(conf.Server.Host, "/") {
 		network = "unix"
-		address = conf.Host
+		address = conf.Server.Host
 	}
 
 	listener, err := net.Listen(network, address)
 	if err != nil {
 		slog.Error("failed to listen", slog.String("err", err.Error()))
-		return
+		return err
 	}
 
 	slog.Info("yt-dlp-webui started", slog.String("address", address))
@@ -166,14 +170,12 @@ func RunBlocking(rc *RunConfig) {
 	if err := srv.Serve(listener); err != nil {
 		slog.Warn("http server stopped", slog.String("err", err.Error()))
 	}
+
+	return nil
 }
 
 func newServer(c serverConfig) *http.Server {
 	// archiver.Register(c.db)
-
-	cronTaskRunner := task.NewCronTaskRunner(c.mq, c.mdb)
-	go cronTaskRunner.Spawner(context.TODO())
-
 	service := ytdlpRPC.Container(c.mdb, c.mq, c.lm)
 	rpc.Register(service)
 
@@ -197,7 +199,7 @@ func newServer(c serverConfig) *http.Server {
 	// use in dev
 	// r.Use(middleware.Logger)
 
-	baseUrl := config.Instance().BaseURL
+	baseUrl := config.Instance().Server.BaseURL
 	r.Mount(baseUrl+"/", http.StripPrefix(baseUrl, http.FileServerFS(c.frontend)))
 
 	// swagger
@@ -246,36 +248,35 @@ func newServer(c serverConfig) *http.Server {
 	r.Route("/status", status.ApplyRouter(c.mdb))
 
 	// Subscriptions
-	r.Route("/subscriptions", subscription.Container(c.db, cronTaskRunner).ApplyRouter())
+	r.Route("/subscriptions", subscription.Container(c.db, c.taskRunner).ApplyRouter())
 
 	// Twitch
 	r.Route("/twitch", func(r chi.Router) {
 		r.Use(middlewares.ApplyAuthenticationByConfig)
-		r.Get("/users", twitch.GetMonitoredUsers(c.tm))
-		r.Post("/user", twitch.MonitorUserHandler(c.tm))
-		r.Delete("/user/{user}", twitch.DeleteUser(c.tm))
+		r.Get("/users", twitch.GetMonitoredUsers(c.twitchMonitor))
+		r.Post("/user", twitch.MonitorUserHandler(c.twitchMonitor))
+		r.Delete("/user/{user}", twitch.DeleteUser(c.twitchMonitor))
+	})
+
+	// Pipelines
+	r.Route("/pipelines", func(r chi.Router) {
+		h := pipeline.NewRestHandler(c.db)
+		r.Use(middlewares.ApplyAuthenticationByConfig)
+		r.Get("/id/{id}", h.GetPipeline)
+		r.Get("/all", h.GetAllPipelines)
+		r.Post("/", h.SavePipeline)
+		r.Delete("/id/{id}", h.DeletePipeline)
 	})
 
 	return &http.Server{Handler: r}
 }
 
-func gracefulShutdown(srv *http.Server, cfg *serverConfig) {
-	ctx, stop := signal.NotifyContext(context.Background(),
-		os.Interrupt,
-		syscall.SIGTERM,
-		syscall.SIGQUIT,
-	)
+func gracefulShutdown(ctx context.Context, srv *http.Server, cfg *serverConfig) {
+	<-ctx.Done()
+	slog.Info("shutdown signal received")
 
-	go func() {
-		<-ctx.Done()
-		slog.Info("shutdown signal received")
-
-		defer func() {
-			cfg.mdb.Persist()
-			cfg.db.Close()
-
-			stop()
-			srv.Shutdown(context.Background())
-		}()
+	defer func() {
+		cfg.db.Close()
+		srv.Shutdown(context.Background())
 	}()
 }

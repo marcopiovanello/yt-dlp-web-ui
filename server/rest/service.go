@@ -179,7 +179,7 @@ func (s *Service) GetVersion(ctx context.Context) (string, string, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	cmd := exec.CommandContext(ctx, config.Instance().DownloaderPath, "--version")
+	cmd := exec.CommandContext(ctx, config.Instance().Paths.DownloaderPath, "--version")
 	go func() {
 		stdout, _ := cmd.Output()
 		result <- string(stdout)

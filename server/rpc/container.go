@@ -22,10 +22,10 @@ func Container(db *kv.Store, mq *queue.MessageQueue, lm *livestream.Monitor) *Se
 // RPC service must be registered before applying this router!
 func ApplyRouter() func(chi.Router) {
 	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
+		if config.Instance().Authentication.RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
-		if config.Instance().UseOpenId {
+		if config.Instance().OpenId.UseOpenId {
 			r.Use(openid.Middleware)
 		}
 		r.Get("/ws", WebSocket)

@@ -15,7 +15,7 @@ import (
 )
 
 func DefaultFetcher(url string) (*common.DownloadMetadata, error) {
-	cmd := exec.Command(config.Instance().DownloaderPath, url, "-J")
+	cmd := exec.Command(config.Instance().Paths.DownloaderPath, url, "-J")
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdout, err := cmd.StdoutPipe()

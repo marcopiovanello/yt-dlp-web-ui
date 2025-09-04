@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/google/uuid"
 	bolt "go.etcd.io/bbolt"
 )
 
@@ -13,6 +14,7 @@ type Step struct {
 	Type       string   `json:"type"`                  // es. "transcoder", "filewriter"
 	FFmpegArgs []string `json:"ffmpeg_args,omitempty"` // args da passare a ffmpeg
 	Path       string   `json:"path,omitempty"`        // solo per filewriter
+	Extension  string   `json:"extension,omitempty"`   // solo per filewriter
 }
 
 type Pipeline struct {
@@ -25,14 +27,9 @@ type Store struct {
 	db *bolt.DB
 }
 
-func NewStore(path string) (*Store, error) {
-	db, err := bolt.Open(path, 0600, nil)
-	if err != nil {
-		return nil, err
-	}
-
+func NewStore(db *bolt.DB) (*Store, error) {
 	// init bucket
-	err = db.Update(func(tx *bolt.Tx) error {
+	err := db.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucketIfNotExists(bucket)
 		return err
 	})
@@ -43,13 +40,17 @@ func NewStore(path string) (*Store, error) {
 	return &Store{db: db}, nil
 }
 
-func (s *Store) Save(p Pipeline) error {
-	data, err := json.Marshal(p)
-	if err != nil {
-		return err
+func (s *Store) Save(p Pipeline) (string, error) {
+	if p.ID == "" {
+		p.ID = uuid.NewString()
 	}
 
-	return s.db.Update(func(tx *bolt.Tx) error {
+	data, err := json.Marshal(p)
+	if err != nil {
+		return "", err
+	}
+
+	return p.ID, s.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket(bucket)
 		return b.Put([]byte(p.ID), data)
 	})
@@ -92,4 +93,11 @@ func (s *Store) List() ([]Pipeline, error) {
 	}
 
 	return result, nil
+}
+
+func (s *Store) Delete(id string) error {
+	return s.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket)
+		return b.Delete([]byte(id))
+	})
 }

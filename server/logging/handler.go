@@ -91,10 +91,10 @@ func sse(logger *ObservableLogger) http.HandlerFunc {
 
 func ApplyRouter(logger *ObservableLogger) func(chi.Router) {
 	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
+		if config.Instance().Authentication.RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
-		if config.Instance().UseOpenId {
+		if config.Instance().OpenId.UseOpenId {
 			r.Use(openid.Middleware)
 		}
 		r.Get("/ws", webSocket(logger))

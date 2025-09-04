@@ -16,7 +16,7 @@ import (
 func DownloadExists(ctx context.Context, url string) (bool, error) {
 	cmd := exec.CommandContext(
 		ctx,
-		config.Instance().DownloaderPath,
+		config.Instance().Paths.DownloaderPath,
 		"--print",
 		"%(extractor)s %(id)s",
 		url,

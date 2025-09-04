@@ -8,6 +8,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const TOKEN_COOKIE_NAME = "jwt-yt-dlp-webui"
@@ -26,11 +27,17 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		username = config.Instance().Username
-		password = config.Instance().Password
+		username     = config.Instance().Authentication.Username
+		passwordHash = config.Instance().Authentication.PasswordHash
 	)
 
-	if username != req.Username || password != req.Password {
+	err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(req.Password))
+	if err != nil {
+		http.Error(w, "invalid username or password", http.StatusBadRequest)
+		return
+	}
+
+	if username != req.Username {
 		http.Error(w, "invalid username or password", http.StatusBadRequest)
 		return
 	}

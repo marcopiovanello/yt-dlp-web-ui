@@ -19,10 +19,10 @@ func ApplyRouter(args *ContainerArgs) func(chi.Router) {
 	h := Container(args)
 
 	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
+		if config.Instance().Authentication.RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
-		if config.Instance().UseOpenId {
+		if config.Instance().OpenId.UseOpenId {
 			r.Use(openid.Middleware)
 		}
 		r.Post("/exec", h.Exec())

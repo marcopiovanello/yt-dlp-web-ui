@@ -57,7 +57,7 @@ func (l *LiveStreamDownloader) Start() error {
 
 	params := append(baseParams, "-o", "-")
 
-	cmd := exec.Command(config.Instance().DownloaderPath, params...)
+	cmd := exec.Command(config.Instance().Paths.DownloaderPath, params...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	// stdout = media stream
@@ -102,11 +102,11 @@ func (l *LiveStreamDownloader) Start() error {
 	if !l.hasFileWriter() {
 		go func() {
 			filepath.Join(
-				config.Instance().DownloadPath,
+				config.Instance().Paths.DownloadPath,
 				fmt.Sprintf("%s (live) %s.mp4", l.Id, time.Now().Format(time.ANSIC)),
 			)
 
-			defaultPath := filepath.Join(config.Instance().DownloadPath)
+			defaultPath := filepath.Join(config.Instance().Paths.DownloadPath)
 			f, err := os.Create(defaultPath)
 			if err != nil {
 				slog.Error("failed to create fallback file", slog.Any("err", err))

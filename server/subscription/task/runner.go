@@ -129,7 +129,7 @@ func (t *CronTaskRunner) fetcher(ctx context.Context, req *monitorTask) time.Dur
 
 	cmd := exec.CommandContext(
 		ctx,
-		config.Instance().DownloaderPath,
+		config.Instance().Paths.DownloaderPath,
 		"-I1",
 		"--flat-playlist",
 		"--print", "webpage_url",

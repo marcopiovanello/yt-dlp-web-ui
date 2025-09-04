@@ -87,7 +87,7 @@ func doAuthentification(r *http.Request, setCookieCallback func(t *oauth2.Token)
 		return nil, err
 	}
 
-	whitelist := config.Instance().OpenIdEmailWhitelist
+	whitelist := config.Instance().OpenId.EmailWhitelist
 
 	if len(whitelist) > 0 && !slices.Contains(whitelist, claims.Email) {
 		return nil, errors.New("email address not found in ACL")

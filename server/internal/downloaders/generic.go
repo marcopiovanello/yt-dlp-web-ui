@@ -63,7 +63,7 @@ func (g *GenericDownloader) Start() error {
 	g.Params = argsSanitizer(g.Params)
 
 	out := internal.DownloadOutput{
-		Path:     config.Instance().DownloadPath,
+		Path:     config.Instance().Paths.DownloadPath,
 		Filename: "%(title)s.%(ext)s",
 	}
 
@@ -101,7 +101,7 @@ func (g *GenericDownloader) Start() error {
 
 	slog.Info("requesting download", slog.String("url", g.URL), slog.Any("params", params))
 
-	cmd := exec.Command(config.Instance().DownloaderPath, params...)
+	cmd := exec.Command(config.Instance().Paths.DownloaderPath, params...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdout, err := cmd.StdoutPipe()

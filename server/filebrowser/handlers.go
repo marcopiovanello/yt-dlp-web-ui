@@ -89,7 +89,7 @@ type ListRequest struct {
 }
 
 func ListDownloaded(w http.ResponseWriter, r *http.Request) {
-	root := config.Instance().DownloadPath
+	root := config.Instance().Paths.DownloadPath
 	req := new(ListRequest)
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -157,7 +157,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 
 	filename := string(decoded)
 
-	root := config.Instance().DownloadPath
+	root := config.Instance().Paths.DownloadPath
 
 	if strings.Contains(filepath.Dir(filepath.Clean(filename)), filepath.Clean(root)) {
 		http.ServeFile(w, r, filename)
@@ -189,7 +189,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	filename := string(decoded)
 
-	root := config.Instance().DownloadPath
+	root := config.Instance().Paths.DownloadPath
 
 	if strings.Contains(filepath.Dir(filepath.Clean(filename)), filepath.Clean(root)) {
 		w.Header().Add("Content-Disposition", "inline; filename=\""+filepath.Base(filename)+"\"")
