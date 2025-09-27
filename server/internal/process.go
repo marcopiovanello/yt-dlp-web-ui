@@ -105,8 +105,12 @@ func (p *Process) Start() {
 
 	// if user asked to manually override the output path...
 	if !(slices.Contains(p.Params, "-P") || slices.Contains(p.Params, "--paths")) {
+		p.Params = append(p.Params, "-P")
+		p.Params = append(p.Params, out.Path)
+	}
+	if !(slices.Contains(p.Params, "-o") || slices.Contains(p.Params, "--output")) {
 		p.Params = append(p.Params, "-o")
-		p.Params = append(p.Params, fmt.Sprintf("%s/%s", out.Path, out.Filename))
+		p.Params = append(p.Params, out.Filename)
 	}
 
 	params := append(baseParams, p.Params...)

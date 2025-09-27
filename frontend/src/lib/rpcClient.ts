@@ -71,17 +71,16 @@ export class RPCClient {
       return
     }
 
-    const rename = req.args.includes('-o')
-      ? req.args
-        .substring(req.args.indexOf('-o'))
-        .replaceAll("'", '')
-        .replaceAll('"', '')
-        .split('-o')
-        .map(s => s.trim())
-        .join('')
-        .split(' ')
-        .at(0) ?? ''
-      : ''
+    const argsArr = req.args
+        .match(/(?:[^\s'"\\]|\\.|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")+/g)
+
+    let rename = argsArr?.findIndex((el) => el === '-o' || el === '--output') !== -1
+        ? argsArr[argsArr.findIndex((el) => el === '-o' || el === '--output') + 1]
+        : ''
+
+    if (rename.length) {
+        rename = rename.replace(/^['"]?(.*?)['"]?$/, '$1')
+    }
 
     const sanitizedArgs = this.argsSanitizer(
       req.args
