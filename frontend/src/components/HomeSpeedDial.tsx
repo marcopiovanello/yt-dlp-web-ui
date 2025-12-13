@@ -41,7 +41,7 @@ const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
       <SpeedDialAction
         icon={<FolderZipIcon />}
         tooltipTitle={i18n.t('bulkDownload')}
-        onClick={() => window.open(`${serverAddr}/archive/bulk?token=${localStorage.getItem('token')}`)}
+        onClick={() => window.open(`${serverAddr}/filebrowser/bulk?token=${localStorage.getItem('token')}`)}
       />
       <SpeedDialAction
         icon={<ClearAllIcon />}
