@@ -178,7 +178,7 @@ export default function Layout() {
                 <ListItemIcon>
                   <LiveTvIcon />
                 </ListItemIcon>
-                <ListItemText primary={i18n.t('archiveButtonLabel')} />
+                <ListItemText primary={i18n.t('monitorButtonLabel')} />
               </ListItemButton>
             </Link>
             <Link to={'/log'} style={
