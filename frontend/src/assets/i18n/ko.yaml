@@ -1,5 +1,6 @@
 keys:
   urlInput: YouTube나 다른 지원되는 사이트의 URL
+  monitorButtonLabel: Monitor
   statusTitle: 상태
   startButton: 시작
   statusReady: 준비됨

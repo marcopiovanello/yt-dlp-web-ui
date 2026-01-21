@@ -38,6 +38,7 @@ keys:
   homeButtonLabel: Home
   archiveButtonLabel: Archiv
   settingsButtonLabel: Einstellungen
+  monitorButtonLabel: Monitor
   rpcAuthenticationLabel: RPC Authentifizierung
   themeTogglerLabel: Modus Umschalter
   loadingLabel: Lädt...
