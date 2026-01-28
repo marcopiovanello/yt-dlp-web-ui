@@ -190,19 +190,20 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	root := config.Instance().DownloadPath
 
-	if strings.Contains(filepath.Dir(filepath.Clean(filename)), filepath.Clean(root)) {
-		w.Header().Add("Content-Disposition", "inline; filename=\""+filepath.Base(filename)+"\"")
-		w.Header().Set("Content-Type", "application/octet-stream")
+if strings.HasPrefix(filename, root) {
+	w.Header().Add("Content-Disposition", "inline; filename=\""+filepath.Base(filename)+"\"")
+	w.Header().Set("Content-Type", "application/octet-stream")
 
-		fd, err := os.Open(filename)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		io.Copy(w, fd)
+	fd, err := os.Open(filename)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	defer fd.Close()
+	io.Copy(w, fd)
+	return
+}
 
 	w.WriteHeader(http.StatusUnauthorized)
 }
