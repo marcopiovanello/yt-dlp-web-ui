@@ -1,3 +1,6 @@
+> [!CAUTION]
+> Unsupervised AI code is prohibited in this repo.
+
 > [!NOTE]  
 > A poll is up to decide the future of yt-dlp-web-ui frontend! If you're interested you can take part.  
 > https://github.com/marcopiovanello/yt-dlp-web-ui/discussions/223
