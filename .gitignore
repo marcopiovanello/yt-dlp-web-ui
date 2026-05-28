@@ -30,3 +30,4 @@ livestreams.dat
 .vite/deps
 archive.txt
 twitch-monitor.dat
+Dockerfile
