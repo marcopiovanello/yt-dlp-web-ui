@@ -1,5 +1,7 @@
 keys:
   urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
+  monitorButtonLabel: Monitor
+  monitorButtonLabel: Monitor
   statusTitle: Статус
   startButton: Начать
   statusReady: Готово

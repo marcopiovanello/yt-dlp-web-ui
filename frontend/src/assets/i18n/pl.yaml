@@ -1,5 +1,6 @@
 keys:
   urlInput: Adres URL YouTube lub innej obsługiwanej usługi
+  monitorButtonLabel: Monitor
   statusTitle: Status
   startButton: Początek
   statusReady: Gotowy

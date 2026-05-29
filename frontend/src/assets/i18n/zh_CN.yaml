@@ -1,5 +1,6 @@
 keys:
   urlInput: 视频 URL
+  monitorButtonLabel: Monitor
   statusTitle: 状态
   statusReady: 就绪
   selectFormatButton: 选择格式

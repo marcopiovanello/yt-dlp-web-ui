@@ -1,5 +1,6 @@
 keys:
   urlInput: Video URL (soronként egy)
+  monitorButtonLabel: Monitor
   statusTitle: Állapot
   statusReady: Előkészítve
   selectFormatButton: Válassz formátumot

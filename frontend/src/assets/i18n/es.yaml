@@ -36,6 +36,7 @@ keys:
   homeButtonLabel: Home
   archiveButtonLabel: Archive
   settingsButtonLabel: Settings
+  monitorButtonLabel: Monitor
   rpcAuthenticationLabel: RPC authentication
   themeTogglerLabel: Theme toggler
   loadingLabel: Loading...

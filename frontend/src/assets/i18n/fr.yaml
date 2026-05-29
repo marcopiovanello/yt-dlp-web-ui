@@ -36,6 +36,7 @@ keys:
   servedFromReverseProxyCheckbox: Est derrière un sous-dossier de proxy inverse
   notConnectedText: not connected
   settingsLabel: Settings
+  monitorButtonLabel: Monitor
   newDownloadButton: New download
   homeButtonLabel: Home
   archiveButtonLabel: Archive

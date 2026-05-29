@@ -1,5 +1,6 @@
 keys:
   urlInput: Videolänk (en per rad)
+  monitorButtonLabel: Monitor
   statusTitle: Status
   statusReady: Redo
   selectFormatButton: Välj format
