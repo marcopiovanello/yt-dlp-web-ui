@@ -65,14 +65,16 @@ func Migrate(ctx context.Context, db *sql.DB) error {
 		return nil
 	}
 
-	db.ExecContext(
-		ctx,
-		`INSERT INTO templates (id, name, content) VALUES
-			($1, $2, $3),
-			($4, $5, $6);`,
-		"0", "default", "--no-mtime",
-		"1", "audio only", "-x",
-	)
+db.ExecContext(
+	ctx,
+	`INSERT INTO templates (id, name, content) VALUES
+		($1, $2, $3),
+		($4, $5, $6),
+		($7, $8, $9);`,
+	"0", "default", "--no-mtime",
+	"1", "audio only", "-x",
+	"2", "iOS mp4", "--format bestvideo+bestaudio --merge-output-format mp4 --recode-video mp4 --postprocessor-args \"-c:v libx264 -c:a aac -movflags +faststart\"",
+)
 
 	return nil
 }

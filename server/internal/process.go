@@ -103,6 +103,10 @@ func (p *Process) Start() {
 		"--no-exec",
 	}
 
+	if _, err := os.Stat("cookies.txt"); err == nil {
+		baseParams = append(baseParams, "--cookies", "cookies.txt")
+	}
+
 	// if user asked to manually override the output path...
 	if !(slices.Contains(p.Params, "-P") || slices.Contains(p.Params, "--paths")) {
 		p.Params = append(p.Params, "-o")
@@ -313,7 +317,12 @@ func (p *Process) SetPending() {
 }
 
 func (p *Process) SetMetadata() error {
-	cmd := exec.Command(config.Instance().DownloaderPath, p.Url, "-J")
+	metaArgs := []string{p.Url, "-J"}
+	if _, err := os.Stat("cookies.txt"); err == nil {
+		metaArgs = append(metaArgs, "--cookies", "cookies.txt")
+	}
+
+	cmd := exec.Command(config.Instance().DownloaderPath, metaArgs...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdout, err := cmd.StdoutPipe()
