@@ -100,7 +100,7 @@ func (m *Store) All() *[]internal.ProcessSnapshot {
 
 	m.mu.RLock()
 	for _, v := range m.table {
-		running = append(running, *(v.Status()))
+		running = append(running, v.Status())
 	}
 	m.mu.RUnlock()
 

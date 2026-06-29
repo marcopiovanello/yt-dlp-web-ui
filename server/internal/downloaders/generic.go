@@ -54,6 +54,9 @@ func NewGenericDownload(url string, params []string) Downloader {
 	// in base
 	g.Id = uuid.NewString()
 	g.URL = url
+	g.Params = params
+	g.Completed = false
+
 	return g
 }
 
@@ -89,6 +92,10 @@ func (g *GenericDownloader) Start() error {
 		"--progress-template",
 		templateReplacer.Replace(postprocessTemplate),
 		"--no-exec",
+		"--js-runtimes",
+		config.Instance().Paths.JSRuntimePath,
+		"--remote-components",
+		"ejs:github",
 	}
 
 	// if user asked to manually override the output path...
@@ -164,8 +171,8 @@ func (g *GenericDownloader) Stop() error {
 	return nil
 }
 
-func (g *GenericDownloader) Status() *internal.ProcessSnapshot {
-	return &internal.ProcessSnapshot{
+func (g *GenericDownloader) Status() internal.ProcessSnapshot {
+	return internal.ProcessSnapshot{
 		Id:             g.Id,
 		Info:           g.Metadata,
 		Progress:       g.progress,

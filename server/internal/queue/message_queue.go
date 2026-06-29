@@ -50,7 +50,7 @@ func (m *MessageQueue) Publish(d downloaders.Downloader) {
 // Workers: download + metadata
 func (m *MessageQueue) SetupConsumers() {
 	// N parallel workers for downloadQueue
-	for i := 0; i < m.concurrency; i++ {
+	for i := 1; i < m.concurrency+1; i++ {
 		go m.downloadWorker(i)
 	}
 
@@ -60,6 +60,8 @@ func (m *MessageQueue) SetupConsumers() {
 
 // Worker dei download
 func (m *MessageQueue) downloadWorker(workerId int) {
+	slog.Info("download worker spawned", slog.Int("worker", workerId))
+
 	for {
 		select {
 		case <-m.ctx.Done():
@@ -72,25 +74,22 @@ func (m *MessageQueue) downloadWorker(workerId int) {
 				continue
 			}
 
-			slog.Info("download worker started",
+			slog.Info("download worker starting download",
 				slog.Int("worker", workerId),
 				slog.String("id", p.GetId()),
 			)
 
-			p.Start()
+			m.metadataQueue <- p
+			slog.Info("queued for metadata", slog.String("id", p.GetId()))
 
-			// after the download starts succesfully we pass it to the metadata queue
-			select {
-			case m.metadataQueue <- p:
-				slog.Info("queued for metadata", slog.String("id", p.GetId()))
-			case <-m.ctx.Done():
-				return
-			}
+			p.Start()
 		}
 	}
 }
 
 func (m *MessageQueue) metadataWorker() {
+	slog.Info("metadata worker spawned", slog.Int("worker", 1))
+
 	for {
 		select {
 		case <-m.ctx.Done():
@@ -111,6 +110,7 @@ func (m *MessageQueue) metadataWorker() {
 				continue
 			}
 
+			slog.Info("metadata worker started", slog.String("id", p.GetId()))
 			p.SetMetadata(metadata.DefaultFetcher)
 		}
 	}

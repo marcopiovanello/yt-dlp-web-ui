@@ -69,7 +69,6 @@ func Run(ctx context.Context, rc *RunConfig) error {
 		return err
 	}
 
-	// ---- LOGGING ---------------------------------------------------
 	logWriters := []io.Writer{
 		os.Stdout,
 		observableLogger, // for web-ui
@@ -102,7 +101,6 @@ func Run(ctx context.Context, rc *RunConfig) error {
 
 	// make the new logger the default one with all the new writers
 	slog.SetDefault(logger)
-	// ----------------------------------------------------------------
 
 	mq, err := queue.NewMessageQueue()
 	if err != nil {

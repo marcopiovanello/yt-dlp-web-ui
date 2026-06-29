@@ -10,11 +10,11 @@ import (
 /*
 	Applicable modifiers
 
-				full									|		   short		  |					description
+    full    					| short 		  |	description
 	---------------------------------------------------------------------------------
 	--playlist-start NUMBER     |    -I NUMBER:	  |	  discard first N entries
 	--playlist-end NUMBER       |    -I :NUMBER   |   discard last N entries
-	--playlist-reverse          |    -I ::-1			|   self explanatory
+	--playlist-reverse          |    -I ::-1	  |   self explanatory
 	--max-downloads NUMBER      |                 |   stops after N completed downloads
 */
 

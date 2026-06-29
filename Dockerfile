@@ -1,4 +1,3 @@
-# Node (pnpm) ------------------------------------------------------------------
 FROM node:24-slim AS ui
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -11,9 +10,9 @@ RUN rm -rf node_modules
 
 RUN pnpm install
 RUN pnpm build
-# -----------------------------------------------------------------------------
 
-# Go --------------------------------------------------------------------------
+
+
 FROM golang AS build
 
 WORKDIR /usr/src/yt-dlp-webui
@@ -22,14 +21,14 @@ COPY . .
 COPY --from=ui /usr/src/yt-dlp-webui/frontend /usr/src/yt-dlp-webui/frontend
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
-# -----------------------------------------------------------------------------
 
-# Runtime ---------------------------------------------------------------------
+
+
 FROM python:3-alpine3.22
 
 RUN apk update && \
-apk add ffmpeg ca-certificates curl wget gnutls deno --no-cache && \
-pip install "yt-dlp[default,curl-cffi,mutagen,pycryptodomex,phantomjs,secretstorage]"
+    apk add ffmpeg ca-certificates curl wget gnutls deno --no-cache && \
+    pip install "yt-dlp[default,curl-cffi,mutagen,pycryptodomex,phantomjs,secretstorage]"
 
 VOLUME /downloads /config
 

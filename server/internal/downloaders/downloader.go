@@ -8,7 +8,7 @@ import (
 type Downloader interface {
 	Start() error
 	Stop() error
-	Status() *internal.ProcessSnapshot
+	Status() internal.ProcessSnapshot
 
 	SetOutput(output internal.DownloadOutput)
 	SetProgress(progress internal.DownloadProgress)

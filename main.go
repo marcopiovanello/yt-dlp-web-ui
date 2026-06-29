@@ -64,7 +64,7 @@ func main() {
 		cfg.Server.QueueSize = 2
 	}
 
-	// 6. Frontend FS
+	// Frontend FS
 	var appFS fs.FS
 	if fp := v.GetString("frontend_path"); fp != "" {
 		appFS = os.DirFS(fp)

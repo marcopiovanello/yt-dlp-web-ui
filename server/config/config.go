@@ -7,58 +7,59 @@ import (
 )
 
 type Config struct {
-	Server         ServerConfig   `yaml:"server"`
-	Logging        LoggingConfig  `yaml:"logging"`
-	Paths          PathsConfig    `yaml:"paths"`
-	Authentication AuthConfig     `yaml:"authentication"`
-	OpenId         OpenIdConfig   `yaml:"openid"`
-	Frontend       FrontendConfig `yaml:"frontend"`
-	AutoArchive    bool           `yaml:"auto_archive"`
-	Twitch         TwitchConfig   `yaml:"twitch"`
+	Server         ServerConfig   `mapstructure:"server"`
+	Logging        LoggingConfig  `mapstructure:"logging"`
+	Paths          PathsConfig    `mapstructure:"paths"`
+	Authentication AuthConfig     `mapstructure:"authentication"`
+	OpenId         OpenIdConfig   `mapstructure:"openid"`
+	Frontend       FrontendConfig `mapstructure:"frontend"`
+	AutoArchive    bool           `mapstructure:"auto_archive"`
+	Twitch         TwitchConfig   `mapstructure:"twitch"`
 	path           string
 }
 
 type ServerConfig struct {
-	BaseURL   string `yaml:"base_url"`
-	Host      string `yaml:"host"`
-	Port      int    `yaml:"port"`
-	QueueSize int    `yaml:"queue_size"`
+	BaseURL   string `mapstructure:"base_url"`
+	Host      string `mapstructure:"host"`
+	Port      int    `mapstructure:"port"`
+	QueueSize int    `mapstructure:"queue_size"`
 }
 
 type LoggingConfig struct {
-	LogPath           string `yaml:"log_path"`
-	EnableFileLogging bool   `yaml:"enable_file_logging"`
+	LogPath           string `mapstructure:"log_path"`
+	EnableFileLogging bool   `mapstructure:"enable_file_logging"`
 }
 
 type PathsConfig struct {
-	DownloadPath      string `yaml:"download_path"`
-	DownloaderPath    string `yaml:"downloader_path"`
-	LocalDatabasePath string `yaml:"local_database_path"`
+	DownloadPath      string `mapstructure:"download_path"`
+	DownloaderPath    string `mapstructure:"downloader_path"`
+	LocalDatabasePath string `mapstructure:"local_database_path"`
+	JSRuntimePath     string `mapstructure:"js_runtime_path"`
 }
 
 type AuthConfig struct {
-	RequireAuth  bool   `yaml:"require_auth"`
-	Username     string `yaml:"username"`
-	PasswordHash string `yaml:"password"`
+	RequireAuth  bool   `mapstructure:"require_auth"`
+	Username     string `mapstructure:"username"`
+	PasswordHash string `mapstructure:"password_hash"`
 }
 
 type OpenIdConfig struct {
-	UseOpenId      bool     `yaml:"use_openid"`
-	ProviderURL    string   `yaml:"openid_provider_url"`
-	ClientId       string   `yaml:"openid_client_id"`
-	ClientSecret   string   `yaml:"openid_client_secret"`
-	RedirectURL    string   `yaml:"openid_redirect_url"`
-	EmailWhitelist []string `yaml:"openid_email_whitelist"`
+	UseOpenId      bool     `mapstructure:"use_openid"`
+	ProviderURL    string   `mapstructure:"provider_url"`
+	ClientId       string   `mapstructure:"client_id"`
+	ClientSecret   string   `mapstructure:"client_secret"`
+	RedirectURL    string   `mapstructure:"redirect_url"`
+	EmailWhitelist []string `mapstructure:"email_whitelist"`
 }
 
 type FrontendConfig struct {
-	FrontendPath string `yaml:"frontend_path"`
+	FrontendPath string `mapstructure:"frontend_path"`
 }
 
 type TwitchConfig struct {
-	ClientId      string        `yaml:"client_id"`
-	ClientSecret  string        `yaml:"client_secret"`
-	CheckInterval time.Duration `yaml:"check_interval"`
+	ClientId      string        `mapstructure:"client_id"`
+	ClientSecret  string        `mapstructure:"client_secret"`
+	CheckInterval time.Duration `mapstructure:"check_interval"`
 }
 
 var (

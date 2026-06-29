@@ -139,12 +139,13 @@ func (s *Service) Kill(args string, killed *string) error {
 		return errors.New("nil process")
 	}
 
+	s.db.Delete(download.GetId())
+
 	if err := download.Stop(); err != nil {
 		slog.Info("failed killing process", slog.String("id", download.GetId()), slog.Any("err", err))
 		return err
 	}
 
-	s.db.Delete(download.GetId())
 	slog.Info("succesfully killed process", slog.String("id", download.GetId()))
 
 	return nil

@@ -41,6 +41,7 @@ func NewLiveStreamDownloader(url string, pipes []pipes.Pipe) Downloader {
 	// in base
 	l.Id = uuid.NewString()
 	l.URL = url
+	l.pipes = pipes
 	return l
 }
 
@@ -87,7 +88,7 @@ func (l *LiveStreamDownloader) Start() error {
 		cancel()
 	}()
 
-	// --- costruisci pipeline ---
+	// build pipeline
 	reader := io.Reader(media)
 	for _, pipe := range l.pipes {
 		nr, err := pipe.Connect(reader)
@@ -98,7 +99,6 @@ func (l *LiveStreamDownloader) Start() error {
 		reader = nr
 	}
 
-	// --- fallback: se nessun FileWriter, scrivi su file ---
 	if !l.hasFileWriter() {
 		go func() {
 			filepath.Join(
@@ -122,7 +122,6 @@ func (l *LiveStreamDownloader) Start() error {
 		}()
 	}
 
-	// --- logs consumer ---
 	logs := make(chan []byte)
 	go produceLogs(stderr, logs)
 	go consumeLogs(ctx, logs, l.logConsumer, l)
@@ -156,8 +155,8 @@ func (l *LiveStreamDownloader) Stop() error {
 	return nil
 }
 
-func (l *LiveStreamDownloader) Status() *internal.ProcessSnapshot {
-	return &internal.ProcessSnapshot{
+func (l *LiveStreamDownloader) Status() internal.ProcessSnapshot {
+	return internal.ProcessSnapshot{
 		Id:             l.Id,
 		Info:           l.Metadata,
 		Progress:       l.progress,
