@@ -12,9 +12,9 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/openid"
 
 	"github.com/spf13/viper"
 )
@@ -52,7 +52,6 @@ func main() {
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
-	// Load YAML file if exists
 	if err := v.ReadInConfig(); err != nil {
 		slog.Debug("using defaults")
 	}
@@ -66,7 +65,6 @@ func main() {
 		cfg.Server.QueueSize = 2
 	}
 
-	// Frontend FS
 	var appFS fs.FS
 	if fp := v.GetString("frontend_path"); fp != "" {
 		appFS = os.DirFS(fp)
@@ -79,7 +77,6 @@ func main() {
 		appFS = sub
 	}
 
-	// Configure OpenID if needed
 	openid.Configure()
 
 	// Graceful shutdown

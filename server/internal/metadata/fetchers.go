@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/common"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/common"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
 )
 
 func DefaultFetcher(url string) (*common.DownloadMetadata, error) {

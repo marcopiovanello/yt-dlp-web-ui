@@ -10,11 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/pipes"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/pipes"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/queue"
 )
 
 const (

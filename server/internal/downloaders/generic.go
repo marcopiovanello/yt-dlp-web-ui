@@ -12,9 +12,9 @@ import (
 	"syscall"
 
 	"github.com/google/uuid"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/common"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/common"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal"
 )
 
 const downloadTemplate = `download:

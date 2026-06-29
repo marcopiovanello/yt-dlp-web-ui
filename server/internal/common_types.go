@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/common"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/common"
 )
 
 // Used to unmarshall yt-dlp progress

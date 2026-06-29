@@ -3,8 +3,8 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/openid"
 )
 
 func ApplyAuthenticationByConfig(next http.Handler) http.Handler {

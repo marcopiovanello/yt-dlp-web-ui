@@ -9,7 +9,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal"
 )
 
 func argsSanitizer(params []string) []string {

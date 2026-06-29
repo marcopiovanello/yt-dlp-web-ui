@@ -5,9 +5,9 @@ import (
 	"errors"
 	"math"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/data"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/domain"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/task"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/subscription/data"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/subscription/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/subscription/task"
 	"github.com/robfig/cron/v3"
 )
 

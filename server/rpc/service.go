@@ -4,15 +4,15 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/formats"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/downloaders"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/queue"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/playlist"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/sys"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/updater"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/formats"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/queue"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/playlist"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/sys"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/updater"
 )
 
 type Service struct {

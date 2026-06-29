@@ -2,10 +2,10 @@ package status
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/kv"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/repository"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/rest"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/status/service"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/status/repository"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/status/rest"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/status/service"
 )
 
 func ApplyRouter(mdb *kv.Store) func(chi.Router) {

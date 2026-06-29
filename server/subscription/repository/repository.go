@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/data"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/subscription/data"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/subscription/domain"
 	bolt "go.etcd.io/bbolt"
 )
 
