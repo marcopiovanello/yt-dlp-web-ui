@@ -23,28 +23,28 @@ jobs:
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
         # v3.1.2
-        uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19
+        uses: sigstore/cosign-installer
         with:
           cosign-release: 'v1.13.6'
 
       - name: Set up QEMU for ARM emulation
         # v2.2.0
-        uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7
+        uses: docker/setup-qemu-action
         with:
           platforms: all
       - name: Set up Docker Buildx
         # 2.10.0
-        uses: docker/setup-buildx-action@885d1462b80bc1c1c7f0b00334ad271f09369c55
+        uses: docker/setup-buildx-action
 
       - name: Login to Docker Hub
         # 2.2.0
-        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc
+        uses: docker/login-action
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: Login to GHCR
         # 2.2.0
-        uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc
+        uses: docker/login-action
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -53,18 +53,18 @@ jobs:
       - name: Generate Docker metadata
         id: meta
         # v4.6.0
-        uses: docker/metadata-action@818d4b7b91585d195f67373fd9cb0332e31a7175
+        uses: docker/metadata-action
         with:
           images: |
            ghcr.io/${{ github.repository }}
            docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui
           tags: |
-            type=raw,value=latest
+            type=raw,value=v4
 
       - name: Build and push Docker image
         id: build-and-push
         # v4.2.1
-        uses: docker/build-push-action@0a97817b6ade9f46837855d676c4cca3a2471fc9
+        uses: docker/build-push-action
         with:
           context: .
           push: true

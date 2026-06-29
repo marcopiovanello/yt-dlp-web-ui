@@ -20,11 +20,11 @@ Created for the only purpose of *fetching* videos from my server/nas and monitor
 **Docker images are available on [Docker Hub](https://hub.docker.com/r/marcobaobao/yt-dlp-webui) or [ghcr.io](https://github.com/marcopiovanello/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui)**.
 
 ```sh
-docker pull marcobaobao/yt-dlp-webui
+docker pull marcobaobao/yt-dlp-webui:v4
 ```
 ```sh
-# latest dev
-docker pull ghcr.io/marcopiovanello/yt-dlp-web-ui:latest
+# latest stable
+docker pull ghcr.io/marcopiovanello/yt-dlp-web-ui:v4
 ```
 
 ## Donate to yt-dlp-webui development
