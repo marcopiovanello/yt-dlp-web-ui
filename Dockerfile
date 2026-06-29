@@ -24,7 +24,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 
 
 
-FROM python:3-alpine3.22
+FROM python:alpine
 
 RUN apk update && \
     apk add ffmpeg ca-certificates curl wget gnutls deno --no-cache && \
@@ -38,6 +38,7 @@ COPY --from=build /usr/src/yt-dlp-webui/yt-dlp-webui /app
 
 ENV APP_PATHS_DOWNLOAD_PATH="/downloads"
 ENV APP_PATHS_LOCAL_DATABASE_PATH="/config"
+ENV APP_PATHS_JS_RUNTIME_PATH="deno:/usr/bin/deno"
 
 EXPOSE 3033
 ENTRYPOINT [ "./yt-dlp-webui", "--conf", "/config/config.yml"]

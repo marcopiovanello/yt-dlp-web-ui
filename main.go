@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strings"
 	"syscall"
 
 	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server"
@@ -38,7 +39,7 @@ func main() {
 	// Defaults
 	v.SetDefault("server.host", "0.0.0.0")
 	v.SetDefault("server.port", 3033)
-	v.SetDefault("server.queue_size", 2)
+	v.SetDefault("server.queue_size", runtime.NumCPU())
 	v.SetDefault("paths.download_path", ".")
 	v.SetDefault("paths.downloader_path", "yt-dlp")
 	v.SetDefault("paths.local_database_path", ".")
@@ -48,6 +49,7 @@ func main() {
 
 	// Env binding
 	v.SetEnvPrefix("APP")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
 	// Load YAML file if exists
@@ -88,6 +90,8 @@ func main() {
 		"host", cfg.Server.Host,
 		"port", cfg.Server.Port,
 		"queue_size", cfg.Server.QueueSize,
+		"downloader", cfg.Paths.DownloaderPath,
+		"download_dir", cfg.Paths.DownloadPath,
 	)
 
 	if err := server.Run(ctx, &server.RunConfig{
