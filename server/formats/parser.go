@@ -6,11 +6,11 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
 )
 
 func ParseURL(url string) (*Metadata, error) {
-	cmd := exec.Command(config.Instance().DownloaderPath, url, "-J")
+	cmd := exec.Command(config.Instance().Paths.DownloaderPath, url, "-J")
 
 	stdout, err := cmd.Output()
 	if err != nil {

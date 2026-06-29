@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
 	"golang.org/x/oauth2"
 )
 
@@ -14,24 +14,27 @@ var (
 )
 
 func Configure() {
-	if !config.Instance().UseOpenId {
+	if !config.Instance().OpenId.UseOpenId {
 		return
 	}
 
-	provider, err := oidc.NewProvider(context.Background(), config.Instance().OpenIdProviderURL)
+	provider, err := oidc.NewProvider(
+		context.Background(),
+		config.Instance().OpenId.ProviderURL,
+	)
 	if err != nil {
 		panic(err)
 	}
 
 	oauth2Config = oauth2.Config{
-		ClientID:     config.Instance().OpenIdClientId,
-		ClientSecret: config.Instance().OpenIdClientSecret,
-		RedirectURL:  config.Instance().OpenIdRedirectURL,
+		ClientID:     config.Instance().OpenId.ClientId,
+		ClientSecret: config.Instance().OpenId.ClientSecret,
+		RedirectURL:  config.Instance().OpenId.RedirectURL,
 		Endpoint:     provider.Endpoint(),
 		Scopes:       []string{oidc.ScopeOpenID, "profile", "email"},
 	}
 
 	verifier = provider.Verifier(&oidc.Config{
-		ClientID: config.Instance().OpenIdClientId,
+		ClientID: config.Instance().OpenId.ClientId,
 	})
 }

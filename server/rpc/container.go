@@ -2,15 +2,16 @@ package rpc
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal/livestream"
-	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/queue"
+	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v4/server/middleware"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/openid"
 )
 
 // Dependency injection container.
-func Container(db *internal.MemoryDB, mq *internal.MessageQueue, lm *livestream.Monitor) *Service {
+func Container(db *kv.Store, mq *queue.MessageQueue, lm *livestream.Monitor) *Service {
 	return &Service{
 		db: db,
 		mq: mq,
@@ -21,10 +22,10 @@ func Container(db *internal.MemoryDB, mq *internal.MessageQueue, lm *livestream.
 // RPC service must be registered before applying this router!
 func ApplyRouter() func(chi.Router) {
 	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
+		if config.Instance().Authentication.RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
-		if config.Instance().UseOpenId {
+		if config.Instance().OpenId.UseOpenId {
 			r.Use(openid.Middleware)
 		}
 		r.Get("/ws", WebSocket)

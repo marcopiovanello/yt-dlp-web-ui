@@ -4,12 +4,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/queue"
 )
 
 func setupTest() {
-	config.Instance().DownloaderPath = "build/yt-dlp"
+	config.Instance().Paths.DownloaderPath = "build/yt-dlp"
 }
 
 const URL = "https://www.youtube.com/watch?v=pwoAyLGOysU"
@@ -19,7 +20,7 @@ func TestLivestream(t *testing.T) {
 
 	done := make(chan *LiveStream)
 
-	ls := New(URL, done, &internal.MessageQueue{}, &internal.MemoryDB{})
+	ls := New(URL, done, &queue.MessageQueue{}, &kv.Store{})
 	go ls.Start()
 
 	time.AfterFunc(time.Second*20, func() {

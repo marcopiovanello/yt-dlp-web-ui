@@ -10,8 +10,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/downloaders"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/pipes"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/queue"
 )
 
 const (
@@ -32,11 +35,11 @@ type LiveStream struct {
 	waitTime     time.Duration
 	liveDate     time.Time
 
-	mq *internal.MessageQueue
-	db *internal.MemoryDB
+	mq    *queue.MessageQueue
+	store *kv.Store
 }
 
-func New(url string, done chan *LiveStream, mq *internal.MessageQueue, db *internal.MemoryDB) *LiveStream {
+func New(url string, done chan *LiveStream, mq *queue.MessageQueue, store *kv.Store) *LiveStream {
 	return &LiveStream{
 		url:          url,
 		done:         done,
@@ -44,20 +47,20 @@ func New(url string, done chan *LiveStream, mq *internal.MessageQueue, db *inter
 		waitTime:     time.Second * 0,
 		waitTimeChan: make(chan time.Duration),
 		mq:           mq,
-		db:           db,
+		store:        store,
 	}
 }
 
 // Start the livestream monitoring process, once completion signals on the done channel
 func (l *LiveStream) Start() error {
 	cmd := exec.Command(
-		config.Instance().DownloaderPath,
+		config.Instance().Paths.DownloaderPath,
 		l.url,
 		"--wait-for-video", "30", // wait for the stream to be live and recheck every 10 secs
 		"--no-colors", // no ansi color fuzz
 		"--simulate",
 		"--newline",
-		"--paths", config.Instance().DownloadPath,
+		"--paths", config.Instance().Paths.DownloadPath,
 	)
 
 	stdout, err := cmd.StdoutPipe()
@@ -87,13 +90,12 @@ func (l *LiveStream) Start() error {
 	l.done <- l
 
 	// Send the started livestream to the message queue! :D
-	p := &internal.Process{
-		Url:        l.url,
-		Livestream: true,
-		Params:     []string{"--downloader", "ffmpeg", "--no-part"},
-	}
-	l.db.Set(p)
-	l.mq.Publish(p)
+
+	//TODO: add pipes
+	d := downloaders.NewLiveStreamDownloader(l.url, []pipes.Pipe{})
+
+	l.store.Set(d)
+	l.mq.Publish(d)
 
 	return nil
 }

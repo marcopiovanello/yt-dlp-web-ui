@@ -1,13 +1,16 @@
 package rest
 
 import (
-	"database/sql"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/livestream"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/queue"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	bolt "go.etcd.io/bbolt"
 )
 
 type ContainerArgs struct {
-	DB  *sql.DB
-	MDB *internal.MemoryDB
-	MQ  *internal.MessageQueue
+	DB  *bolt.DB
+	MDB *kv.Store
+	MQ  *queue.MessageQueue
+	LM  *livestream.Monitor
 }

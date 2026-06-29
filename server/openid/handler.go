@@ -11,7 +11,7 @@ import (
 
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/google/uuid"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
 	"golang.org/x/oauth2"
 )
 
@@ -87,7 +87,7 @@ func doAuthentification(r *http.Request, setCookieCallback func(t *oauth2.Token)
 		return nil, err
 	}
 
-	whitelist := config.Instance().OpenIdEmailWhitelist
+	whitelist := config.Instance().OpenId.EmailWhitelist
 
 	if len(whitelist) > 0 && !slices.Contains(whitelist, claims.Email) {
 		return nil, errors.New("email address not found in ACL")

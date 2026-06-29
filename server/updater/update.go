@@ -3,12 +3,12 @@ package updater
 import (
 	"os/exec"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
 )
 
 // Update using the builtin function of yt-dlp
 func UpdateExecutable() error {
-	cmd := exec.Command(config.Instance().DownloaderPath, "-U")
+	cmd := exec.Command(config.Instance().Paths.DownloaderPath, "-U")
 
 	err := cmd.Start()
 	if err != nil {

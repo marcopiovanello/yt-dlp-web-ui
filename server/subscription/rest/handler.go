@@ -6,10 +6,10 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v4/server/middleware"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/subscription/domain"
 )
 
 type RestHandler struct {
@@ -19,10 +19,10 @@ type RestHandler struct {
 // ApplyRouter implements domain.RestHandler.
 func (h *RestHandler) ApplyRouter() func(chi.Router) {
 	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
+		if config.Instance().Authentication.RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
-		if config.Instance().UseOpenId {
+		if config.Instance().OpenId.UseOpenId {
 			r.Use(openid.Middleware)
 		}
 

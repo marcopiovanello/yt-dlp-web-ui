@@ -3,7 +3,7 @@ package common
 import "time"
 
 // Used to deser the yt-dlp -J output
-type DownloadInfo struct {
+type DownloadMetadata struct {
 	URL         string    `json:"url"`
 	Title       string    `json:"title"`
 	Thumbnail   string    `json:"thumbnail"`

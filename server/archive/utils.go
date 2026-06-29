@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
 )
 
 // Perform a search on the archive.txt file an determines if a download
@@ -16,7 +16,7 @@ import (
 func DownloadExists(ctx context.Context, url string) (bool, error) {
 	cmd := exec.CommandContext(
 		ctx,
-		config.Instance().DownloaderPath,
+		config.Instance().Paths.DownloaderPath,
 		"--print",
 		"%(extractor)s %(id)s",
 		url,

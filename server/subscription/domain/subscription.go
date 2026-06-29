@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/subscription/data"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/subscription/data"
 )
 
 type Subscription struct {

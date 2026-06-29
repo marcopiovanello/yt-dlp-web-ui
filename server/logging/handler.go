@@ -9,9 +9,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v4/server/middleware"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/openid"
 )
 
 var upgrader = websocket.Upgrader{
@@ -91,10 +91,10 @@ func sse(logger *ObservableLogger) http.HandlerFunc {
 
 func ApplyRouter(logger *ObservableLogger) func(chi.Router) {
 	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
+		if config.Instance().Authentication.RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
-		if config.Instance().UseOpenId {
+		if config.Instance().OpenId.UseOpenId {
 			r.Use(openid.Middleware)
 		}
 		r.Get("/ws", webSocket(logger))

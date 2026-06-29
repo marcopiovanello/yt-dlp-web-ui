@@ -1,42 +1,65 @@
 package config
 
 import (
-	"os"
 	"path/filepath"
 	"sync"
 	"time"
-
-	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	LogPath              string   `yaml:"log_path"`
-	EnableFileLogging    bool     `yaml:"enable_file_logging"`
-	BaseURL              string   `yaml:"base_url"`
-	Host                 string   `yaml:"host"`
-	Port                 int      `yaml:"port"`
-	DownloadPath         string   `yaml:"downloadPath"`
-	DownloaderPath       string   `yaml:"downloaderPath"`
-	RequireAuth          bool     `yaml:"require_auth"`
-	Username             string   `yaml:"username"`
-	Password             string   `yaml:"password"`
-	QueueSize            int      `yaml:"queue_size"`
-	LocalDatabasePath    string   `yaml:"local_database_path"`
-	SessionFilePath      string   `yaml:"session_file_path"`
-	path                 string   // private
-	UseOpenId            bool     `yaml:"use_openid"`
-	OpenIdProviderURL    string   `yaml:"openid_provider_url"`
-	OpenIdClientId       string   `yaml:"openid_client_id"`
-	OpenIdClientSecret   string   `yaml:"openid_client_secret"`
-	OpenIdRedirectURL    string   `yaml:"openid_redirect_url"`
-	OpenIdEmailWhitelist []string `yaml:"openid_email_whitelist"`
-	FrontendPath         string   `yaml:"frontend_path"`
-	AutoArchive          bool     `yaml:"auto_archive"`
-	Twitch               struct {
-		ClientId      string        `yaml:"client_id"`
-		ClientSecret  string        `yaml:"client_secret"`
-		CheckInterval time.Duration `yaml:"check_interval"`
-	} `yaml:"twitch"`
+	Server         ServerConfig   `mapstructure:"server"`
+	Logging        LoggingConfig  `mapstructure:"logging"`
+	Paths          PathsConfig    `mapstructure:"paths"`
+	Authentication AuthConfig     `mapstructure:"authentication"`
+	OpenId         OpenIdConfig   `mapstructure:"openid"`
+	Frontend       FrontendConfig `mapstructure:"frontend"`
+	AutoArchive    bool           `mapstructure:"auto_archive"`
+	Twitch         TwitchConfig   `mapstructure:"twitch"`
+	path           string
+}
+
+type ServerConfig struct {
+	BaseURL   string `mapstructure:"base_url"`
+	Host      string `mapstructure:"host"`
+	Port      int    `mapstructure:"port"`
+	QueueSize int    `mapstructure:"queue_size"`
+}
+
+type LoggingConfig struct {
+	LogPath           string `mapstructure:"log_path"`
+	EnableFileLogging bool   `mapstructure:"enable_file_logging"`
+}
+
+type PathsConfig struct {
+	DownloadPath      string `mapstructure:"download_path"`
+	DownloaderPath    string `mapstructure:"downloader_path"`
+	LocalDatabasePath string `mapstructure:"local_database_path"`
+	JSRuntimePath     string `mapstructure:"js_runtime_path"`
+}
+
+type AuthConfig struct {
+	RequireAuth  bool   `mapstructure:"require_auth"`
+	Username     string `mapstructure:"username"`
+	PasswordHash string `mapstructure:"password_hash"`
+}
+
+type OpenIdConfig struct {
+	UseOpenId      bool     `mapstructure:"use_openid"`
+	ProviderURL    string   `mapstructure:"provider_url"`
+	ClientId       string   `mapstructure:"client_id"`
+	ClientSecret   string   `mapstructure:"client_secret"`
+	RedirectURL    string   `mapstructure:"redirect_url"`
+	EmailWhitelist []string `mapstructure:"email_whitelist"`
+}
+
+type FrontendConfig struct {
+	FrontendPath string `mapstructure:"frontend_path"`
+}
+
+type TwitchConfig struct {
+	ClientId      string        `mapstructure:"client_id"`
+	ClientSecret  string        `mapstructure:"client_secret"`
+	CheckInterval time.Duration `mapstructure:"check_interval"`
 }
 
 var (
@@ -52,22 +75,6 @@ func Instance() *Config {
 		})
 	}
 	return instance
-}
-
-// Initialises the Config struct given its config file
-func (c *Config) LoadFile(filename string) error {
-	fd, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-
-	c.path = filename
-
-	if err := yaml.NewDecoder(fd).Decode(c); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // Path of the directory containing the config file

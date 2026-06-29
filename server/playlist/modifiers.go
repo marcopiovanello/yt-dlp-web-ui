@@ -4,21 +4,21 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/common"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/common"
 )
 
 /*
 	Applicable modifiers
 
-				full									|		   short		  |					description
+    full    					| short 		  |	description
 	---------------------------------------------------------------------------------
 	--playlist-start NUMBER     |    -I NUMBER:	  |	  discard first N entries
 	--playlist-end NUMBER       |    -I :NUMBER   |   discard last N entries
-	--playlist-reverse          |    -I ::-1			|   self explanatory
+	--playlist-reverse          |    -I ::-1	  |   self explanatory
 	--max-downloads NUMBER      |                 |   stops after N completed downloads
 */
 
-func ApplyModifiers(entries *[]common.DownloadInfo, args []string) error {
+func ApplyModifiers(entries *[]common.DownloadMetadata, args []string) error {
 	for i, modifier := range args {
 		switch modifier {
 		case "--playlist-start":
@@ -38,7 +38,7 @@ func ApplyModifiers(entries *[]common.DownloadInfo, args []string) error {
 	return nil
 }
 
-func playlistStart(i int, modifier string, args []string, entries *[]common.DownloadInfo) error {
+func playlistStart(i int, modifier string, args []string, entries *[]common.DownloadMetadata) error {
 	if !guard(i, len(modifier)) {
 		return nil
 	}
@@ -53,7 +53,7 @@ func playlistStart(i int, modifier string, args []string, entries *[]common.Down
 	return nil
 }
 
-func playlistEnd(i int, modifier string, args []string, entries *[]common.DownloadInfo) error {
+func playlistEnd(i int, modifier string, args []string, entries *[]common.DownloadMetadata) error {
 	if !guard(i, len(modifier)) {
 		return nil
 	}
@@ -68,7 +68,7 @@ func playlistEnd(i int, modifier string, args []string, entries *[]common.Downlo
 	return nil
 }
 
-func maxDownloads(i int, modifier string, args []string, entries *[]common.DownloadInfo) error {
+func maxDownloads(i int, modifier string, args []string, entries *[]common.DownloadMetadata) error {
 	if !guard(i, len(modifier)) {
 		return nil
 	}

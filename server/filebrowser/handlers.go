@@ -17,8 +17,9 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/internal/kv"
 )
 
 /*
@@ -88,7 +89,7 @@ type ListRequest struct {
 }
 
 func ListDownloaded(w http.ResponseWriter, r *http.Request) {
-	root := config.Instance().DownloadPath
+	root := config.Instance().Paths.DownloadPath
 	req := new(ListRequest)
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -156,7 +157,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 
 	filename := string(decoded)
 
-	root := config.Instance().DownloadPath
+	root := config.Instance().Paths.DownloadPath
 
 	if strings.Contains(filepath.Dir(filepath.Clean(filename)), filepath.Clean(root)) {
 		http.ServeFile(w, r, filename)
@@ -188,7 +189,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	filename := string(decoded)
 
-	root := config.Instance().DownloadPath
+	root := config.Instance().Paths.DownloadPath
 
 	if strings.Contains(filepath.Dir(filepath.Clean(filename)), filepath.Clean(root)) {
 		w.Header().Add("Content-Disposition", "inline; filename=\""+filepath.Base(filename)+"\"")
@@ -207,9 +208,9 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusUnauthorized)
 }
 
-func BulkDownload(mdb *internal.MemoryDB) http.HandlerFunc {
+func BulkDownload(mdb *kv.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ps := slices.DeleteFunc(*mdb.All(), func(e internal.ProcessResponse) bool {
+		ps := slices.DeleteFunc(*mdb.All(), func(e internal.ProcessSnapshot) bool {
 			return e.Progress.Status != internal.StatusCompleted
 		})
 

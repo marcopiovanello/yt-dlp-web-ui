@@ -6,11 +6,11 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/archive/domain"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/config"
-	"github.com/marcopiovanello/yt-dlp-web-ui/v3/server/openid"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/archive/domain"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/config"
+	"github.com/marcopiovanello/yt-dlp-web-ui/v4/server/openid"
 
-	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v3/server/middleware"
+	middlewares "github.com/marcopiovanello/yt-dlp-web-ui/v4/server/middleware"
 )
 
 type Handler struct {
@@ -146,10 +146,10 @@ func (h *Handler) GetCursor() http.HandlerFunc {
 // ApplyRouter implements domain.RestHandler.
 func (h *Handler) ApplyRouter() func(chi.Router) {
 	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
+		if config.Instance().Authentication.RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
-		if config.Instance().UseOpenId {
+		if config.Instance().OpenId.UseOpenId {
 			r.Use(openid.Middleware)
 		}
 
