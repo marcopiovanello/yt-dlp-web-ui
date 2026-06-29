@@ -36,5 +36,8 @@ WORKDIR /app
 
 COPY --from=build /usr/src/yt-dlp-webui/yt-dlp-webui /app
 
+ENV APP_PATHS_DOWNLOAD_PATH="/downloads"
+ENV APP_PATHS_LOCAL_DATABASE_PATH="/config"
+
 EXPOSE 3033
-ENTRYPOINT [ "./yt-dlp-webui" , "--out", "/downloads", "--conf", "/config/config.yml", "--db", "/config/local.db" ]
+ENTRYPOINT [ "./yt-dlp-webui", "--conf", "/config/config.yml"]
