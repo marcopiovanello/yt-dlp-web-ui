@@ -3,7 +3,7 @@
 
 > [!NOTE]  
 > Read before updating to v4
-> Server v4 migration guide https://github.com/marcopiovanello/yt-dlp-web-ui/discussions/223
+> Server v4 migration guide https://github.com/marcopiovanello/yt-dlp-web-ui/wiki/Migrate-to-v4
 
 > [!NOTE]  
 > A poll is up to decide the future of yt-dlp-web-ui frontend! If you're interested you can take part.  
