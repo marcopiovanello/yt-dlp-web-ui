@@ -38,14 +38,14 @@ func buildFilename(o *internal.DownloadOutput) {
 	)
 }
 
-func produceLogs(r io.Reader, logs chan<- []byte) {
-	go func() {
-		scanner := bufio.NewScanner(r)
+func produceLogs(r io.Reader, logs chan<- []byte) error {
+	scanner := bufio.NewScanner(r)
 
-		for scanner.Scan() {
-			logs <- scanner.Bytes()
-		}
-	}()
+	for scanner.Scan() {
+		logs <- scanner.Bytes()
+	}
+
+	return scanner.Err()
 }
 
 func consumeLogs(ctx context.Context, logs <-chan []byte, c LogConsumer, d Downloader) {
@@ -63,7 +63,7 @@ func consumeLogs(ctx context.Context, logs <-chan []byte, c LogConsumer, d Downl
 	}
 }
 
-func printYtDlpErrors(stdout io.Reader, shortId, url string) {
+func printYtDlpErrors(stdout io.Reader, shortId, url string) error {
 	scanner := bufio.NewScanner(stdout)
 
 	for scanner.Scan() {
@@ -73,4 +73,6 @@ func printYtDlpErrors(stdout io.Reader, shortId, url string) {
 			slog.String("err", scanner.Text()),
 		)
 	}
+
+	return scanner.Err()
 }

@@ -108,7 +108,9 @@ func (g *GenericDownloader) Start() error {
 
 	slog.Info("requesting download", slog.String("url", g.URL), slog.Any("params", params))
 
-	cmd := exec.Command(config.Instance().Paths.DownloaderPath, params...)
+	ctx, cancel := context.WithCancel(context.Background())
+
+	cmd := exec.CommandContext(ctx, config.Instance().Paths.DownloaderPath, params...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdout, err := cmd.StdoutPipe()
@@ -130,18 +132,24 @@ func (g *GenericDownloader) Start() error {
 
 	g.proc = cmd.Process
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer func() {
+	stop := func() {
 		stdout.Close()
 		g.Complete()
+		g.progress.Status = internal.StatusCompleted
 		cancel()
-	}()
+	}
+	defer stop()
 
-	logs := make(chan []byte)
+	logs := make(chan []byte, 2)
 	go produceLogs(stdout, logs)
 	go consumeLogs(ctx, logs, g.logConsumer, g)
 
-	go printYtDlpErrors(stderr, g.Id, g.URL)
+	go func() {
+		err := printYtDlpErrors(stderr, g.Id, g.URL)
+		if err != nil {
+			stop()
+		}
+	}()
 
 	g.SetPending(false)
 	return cmd.Wait()

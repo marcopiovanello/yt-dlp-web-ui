@@ -22,7 +22,7 @@ func (d *DownloaderBase) FetchMetadata(fetcher func(url string) (*common.Downloa
 
 	meta, err := fetcher(d.URL)
 	if err != nil {
-		slog.Error("failed to retrieve metadata", slog.Any("err", err))
+		slog.Error("failed to retrieve metadata", slog.String("err", err.Error()))
 		return
 	}
 

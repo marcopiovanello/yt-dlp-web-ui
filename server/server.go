@@ -274,6 +274,7 @@ func gracefulShutdown(ctx context.Context, srv *http.Server, cfg *serverConfig) 
 	slog.Info("shutdown signal received")
 
 	defer func() {
+		cfg.mdb.Snapshot()
 		cfg.db.Close()
 		srv.Shutdown(context.Background())
 	}()

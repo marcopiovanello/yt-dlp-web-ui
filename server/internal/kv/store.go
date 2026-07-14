@@ -79,6 +79,12 @@ func (m *Store) Delete(id string) {
 	m.mu.Lock()
 	delete(m.table, id)
 	m.mu.Unlock()
+
+	m.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(bucket)
+		b.Delete([]byte(id))
+		return nil
+	})
 }
 
 func (m *Store) Keys() *[]string {

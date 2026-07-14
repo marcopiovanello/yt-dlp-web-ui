@@ -31,3 +31,5 @@ livestreams.dat
 archive.txt
 twitch-monitor.dat
 Dockerfile
+*.log
+*.log.gz
