@@ -3,10 +3,10 @@ package downloaders
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"slices"
 	"strings"
 	"syscall"
@@ -91,7 +91,6 @@ func (g *GenericDownloader) Start() error {
 		templateReplacer.Replace(downloadTemplate),
 		"--progress-template",
 		templateReplacer.Replace(postprocessTemplate),
-		"--no-exec",
 		"--js-runtimes",
 		config.Instance().Paths.JSRuntimePath,
 		"--remote-components",
@@ -100,11 +99,22 @@ func (g *GenericDownloader) Start() error {
 
 	// if user asked to manually override the output path...
 	if !(slices.Contains(g.Params, "-P") || slices.Contains(g.Params, "--paths")) {
+		outputPath := filepath.Join(out.Path, out.Filename)
+
+		rel, err := filepath.Rel(config.Instance().Paths.DownloadPath, outputPath)
+		if err != nil {
+			return err
+		}
+		if strings.HasPrefix(rel, "..") {
+			return errors.New(ErrIsNotSubPath)
+		}
+
 		g.Params = append(g.Params, "-o")
-		g.Params = append(g.Params, fmt.Sprintf("%s/%s", out.Path, out.Filename))
+		g.Params = append(g.Params, outputPath)
 	}
 
 	params := append(baseParams, g.Params...)
+	params = append(params, "--no-exec")
 
 	slog.Info("requesting download", slog.String("url", g.URL), slog.Any("params", params))
 
@@ -115,18 +125,18 @@ func (g *GenericDownloader) Start() error {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		slog.Error("failed to get a stdout pipe", slog.Any("err", err))
+		slog.Error("failed to get a stdout pipe", slog.String("err", err.Error()))
 		panic(err)
 	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		slog.Error("failed to get a stderr pipe", slog.Any("err", err))
+		slog.Error("failed to get a stderr pipe", slog.String("err", err.Error()))
 		panic(err)
 	}
 
 	if err := cmd.Start(); err != nil {
-		slog.Error("failed to start yt-dlp process", slog.Any("err", err))
+		slog.Error("failed to start yt-dlp process", slog.String("err", err.Error()))
 		panic(err)
 	}
 
