@@ -1,5 +1,6 @@
 keys:
   urlInput: YouTubeまたはサポート済み動画のURL
+  monitorButtonLabel: Monitor
   statusTitle: 状態
   statusReady: 準備
   selectFormatButton: フォーマット選択

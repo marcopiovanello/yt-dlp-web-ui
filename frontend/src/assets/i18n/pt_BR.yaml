@@ -1,5 +1,6 @@
 keys:
   urlInput: URL do vídeo (uma por linha)
+  monitorButtonLabel: Monitor
   statusTitle: Status
   statusReady: Pronto
   selectFormatButton: Selecionar formato
