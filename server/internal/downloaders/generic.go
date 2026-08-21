@@ -63,7 +63,12 @@ func NewGenericDownload(url string, params []string) Downloader {
 func (g *GenericDownloader) Start() error {
 	g.SetPending(true)
 
-	g.Params = argsSanitizer(g.Params)
+	whiltelistedParams, err := argsSanitizer(g.Params)
+	if err != nil {
+		return err
+	}
+
+	g.Params = whiltelistedParams
 
 	out := internal.DownloadOutput{
 		Path:     config.Instance().Paths.DownloadPath,
@@ -83,7 +88,7 @@ func (g *GenericDownloader) Start() error {
 	templateReplacer := strings.NewReplacer("\n", "", "\t", "", " ", "")
 
 	baseParams := []string{
-		strings.Split(g.URL, "?list")[0], //no playlist
+		strings.Split(g.URL, "?list")[0], //XXX: force no playlist
 		"--newline",
 		"--no-colors",
 		"--no-playlist",
